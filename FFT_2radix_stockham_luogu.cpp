@@ -160,3 +160,43 @@ void fftConv(std::vector<Complex> &A, std::vector<Complex> &B, std::vector<Compl
     }
     Results.resize(len);
 }
+
+inline int read()
+{
+    char c = getchar();
+    int x = 0, f = 1;
+    while (c < '0' || c > '9')
+    {
+        if (c == '-')
+            f = -1;
+        c = getchar();
+    }
+    while (c >= '0' && c <= '9')
+    {
+        x = x * 10 + c - '0';
+        c = getchar();
+    }
+    return x * f;
+}
+std::vector<Complex> samples1, samples2;
+std::vector<Complex> Results;
+int main()
+{
+    int m, n;
+    scanf("%d%d", &n, &m);
+    n++, m++;
+    samples1.resize(n);
+    samples2.resize(m);
+    for (int i = 0; i < n; i++)
+        samples1[i] = Complex(read(), 0);
+    for (int i = 0; i < m; i++)
+        samples2[i] = Complex(read(), 0);
+
+    fftConv(samples1, samples2, Results);
+    // output the results
+
+    for (int i = 0; i < Results.size(); i++)
+        printf("%d ", (int)(Results[i].real + 0.5));
+
+    return 0;
+}
