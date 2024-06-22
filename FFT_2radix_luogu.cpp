@@ -6,7 +6,6 @@
 // 稍微快一点
 typedef unsigned int uint;
 
-const double PI = 3.141592653589793238460;
 const uint MAXN = 1e6 + 5;
 
 class Complex
@@ -60,7 +59,7 @@ public:
 // 用于存放比特翻转后的下标，在卷积中，最多用到 MAXN*4 个下标
 uint reversed[MAXN << 2];
 
-// Utility function to calculate the next power of two greater than or equal to 'n'
+/// @brief 计算大于等于n的最小的2的幂次方
 int nextPowerOfTwo(int n)
 {
     return pow(2, ceil(log2(n)));
@@ -81,6 +80,7 @@ void get_reversed(int bit)
 // 'n' is the number of points in FFT, must be a power of two
 void fft(std::vector<Complex> &samples, const uint n)
 {
+    const double PI = 3.141592653589793238460;
     // Bit-reverse the input samples array based on the levels
     for (uint i = 0; i < n; i++)
     {
@@ -112,6 +112,7 @@ void fft(std::vector<Complex> &samples, const uint n)
 
 void ifft(std::vector<Complex> &samples, const int n)
 {
+    const double PI = 3.141592653589793238460;
     // Bit-reverse the input samples array based on the levels
     for (uint i = 0; i < n; i++)
     {
