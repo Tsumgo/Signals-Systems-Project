@@ -59,9 +59,15 @@ public:
 };
 
 /// @brief 计算大于等于n的最小的2的幂次方
-int nextPowerOfTwo(int n)
+static uint nextPowerOfTwo(uint x)
 {
-    return pow(2, ceil(log2(n)));
+    --x;
+    x |= x >> 1;
+    x |= x >> 2;
+    x |= x >> 4;
+    x |= x >> 8;
+    x |= x >> 16;
+    return ++x;
 }
 
 void fft0(int n, int s, bool eo, std::vector<Complex> &x, std::vector<Complex> &y)
@@ -106,8 +112,8 @@ void fft(int n, std::vector<Complex> &x) // Fourier transform
     std::vector<Complex> y(n); // 自动销毁内存
     fft0(n, 1, 0, x, y);
     // delete[] y;
-    for (int k = 0; k < n; k++)
-        x[k] = x[k] / n;
+    // for (int k = 0; k < n; k++)
+    //     x[k] = x[k] / n;
 }
 
 void ifft(int n, std::vector<Complex> &x) // Inverse Fourier transform
@@ -121,8 +127,9 @@ void ifft(int n, std::vector<Complex> &x) // Inverse Fourier transform
     fft0(n, 1, 0, x, y);
     // delete[] y;
     for (int k = 0; k < n; k++)
-        x[k] = x[k].conj();
+        x[k] = x[k].conj() / n;
 }
+
 /// @brief 使用两次FFT来计算卷积
 /// @param A
 /// @param B

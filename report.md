@@ -413,6 +413,8 @@ $$
 
 [Self-Sorting In-Place Fast Fourier Transforms | SIAM Journal on Scientific Computing](https://epubs.siam.org/doi/10.1137/0912043)
 
+[从Cooley-Tukey FFT到Stockham FFT - Catigeart's Software Development Note](https://catigeart.github.io/stockhamfft/)
+
 
 
 ## 工程细节
@@ -611,6 +613,8 @@ $$
 
 ### 概述
 
+cuFFT provides a simple configuration mechanism called a *plan* that uses internal building blocks to optimize the transform for the given configuration and the particular GPU hardware selected
+
 ### 使用方法
 
 下文简述如何在linux环境下安装FFTW库，并使用这个库编译一份C语言代码。
@@ -721,7 +725,9 @@ make distclean
 
 应用别人的成果。
 
-## 硬件加速
+## 多线程加速
+
+​	CUDA（Compute Unified Device Architecture）是由NVIDIA开发的一种并行计算平台和编程模型，允许开发者使用图形处理单元（GPU）来进行通用计算。
 
 ​	使用GPU实现多线程计算。
 
