@@ -78,8 +78,8 @@ void fft0(int n, int s, bool eo, std::vector<Complex> &x, std::vector<Complex> &
 // y  : work area(or output sequence if eo == 1)
 {
     const int m = n / 2;
-    const double theta0 = 2 * M_PI / n;
-    // 角度
+    const double theta0 = 2 * M_PI / n; // 旋转因子的角度
+    Complex w(1), wm(cos(theta0), -sin(theta0));
 
     if (n == 1)
     {
@@ -91,14 +91,14 @@ void fft0(int n, int s, bool eo, std::vector<Complex> &x, std::vector<Complex> &
     {
         for (int p = 0; p < m; p++)
         {
-            const Complex wp = Complex(cos(p * theta0), -sin(p * theta0));
             for (int q = 0; q < s; q++)
             {
                 const Complex a = x[q + s * (p + 0)];
                 const Complex b = x[q + s * (p + m)];
                 y[q + s * (2 * p + 0)] = a + b;
-                y[q + s * (2 * p + 1)] = (a - b) * wp;
+                y[q + s * (2 * p + 1)] = (a - b) * w;
             }
+            w = w * wm; // w = exp(-j * p * theta0)
         }
         fft0(n / 2, 2 * s, !eo, y, x);
     }
@@ -108,21 +108,16 @@ void fft(int n, std::vector<Complex> &x) // Fourier transform
 // n : sequence length
 // x : input/output sequence
 {
-    // Complex *y = new Complex[n];
     std::vector<Complex> y(n); // 自动销毁内存
     fft0(n, 1, 0, x, y);
-    // delete[] y;
-    // for (int k = 0; k < n; k++)
-    //     x[k] = x[k] / n;
 }
 
-void ifft(int n, std::vector<Complex> &x) // Inverse Fourier transform
+void ifft(int n, std::vector<Complex> &x)
 // n : sequence length
 // x : input/output sequence
 {
     for (int p = 0; p < n; p++)
         x[p] = x[p].conj();
-    // Complex *y = new Complex[n];
     std::vector<Complex> y(n); // 自动销毁内存
     fft0(n, 1, 0, x, y);
     // delete[] y;

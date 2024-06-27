@@ -6,7 +6,7 @@
 // 稍微快一点
 typedef unsigned int uint;
 
-const uint MAXN = 1e6 + 5;
+const uint MAXN = (1 << 24) + 5;
 
 class Complex
 {

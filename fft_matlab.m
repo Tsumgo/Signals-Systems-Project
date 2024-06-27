@@ -1,9 +1,23 @@
-N = 2^24;
-A = rand([1,N]);
-%A = [0,1,3,4,4,3,1,0,4,1,2,3,5,1,3,2];
+clear all;
+fileID = fopen("datas\data9.in","r");
+Line1 = fgets(fileID);
+NM = sscanf(Line1, '%d %d');
+N = NM(1); M = NM(2);
+
+% 读取接下来的 m 个整数
+secondLine = fgets(fileID);
+A = sscanf(secondLine, '%f',N);
+
+% 读取接下来的 n 个整数
+thirdLine = fgets(fileID);
+B = sscanf(thirdLine, '%f',M);
+
+% 关闭文件
+fclose(fileID);
+
+N 
+M
+
 tic;
-B = fft(A);
+C= conv(A,B);
 toc;
-
-
-plot([1,],[])

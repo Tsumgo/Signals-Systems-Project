@@ -1,24 +1,6 @@
 
 
-## Definitions of DFT
-
-### DFT与DTFT
-
-任意**离散时域信号**$x[n]$的**离散时间傅里叶变换**(DTFT)定义为：
-$$
-X(e^{j\omega})=\sum_{n=-\infty}^{+\infty}x[n]e^{-jn\omega}
-$$
-这也是课本上对DTFT的定义，给出一个离散信号，其DTFT为频域连续的信号。当时域信号有限，只在$0\sim N-1$有值时，离散信号$𝑥[𝑛](for\quad n=0,...,N-1)$的DTFT简化为：
-$$
-X(e^{j\omega})=\sum_{n=0}^{N-1}x[n]e^{-jn\omega}
-$$
-之所以要给出DTFT，是由于计算机无法处理连续时间信号。因此我们在时域上对**连续傅里叶变换(FT)**的采样。时域信号是离散的，相应频域信号为连续的。
-
-DFT则是**在频域上对DTFT的均匀采样**。取$X(e^{j\omega})$在离散频点$\{\omega_k=k\frac{2\pi}N\}_{0\leq k<N}$ 上的值，就得到了原信号的DFT：
-$$
-X[k]=X(e^{j\omega_k})=\sum_{n=0}^{N-1}x[n]e^{-j\frac{2\pi}N{kn}}\quad k=0,\ldots,N-1
-$$
-因为DTFT以$2\pi$为周期，因此通常情况下，我们可以只在$(0,2\pi)$区间内采样。这是非常重要的性质。
+## 定义
 
 ### DFT定义
 
@@ -41,6 +23,14 @@ $$
 ​	在计算N点DFT的过程中，对于每一个频域点$X[k],\quad k = 0,\cdots N-1$，需要经过N次的复数乘法、N-1次的复数加法。
 
 ​	因此要得到完整的频谱，总共的计算时间复杂度为$O(n^2+n(n-1))=O(n^2)$。
+
+### 矩阵表示DFT
+
+
+$$
+\begin{gathered}\begin{bmatrix}y_0\\y_1\\y_2\\y_3\\\vdots\\y_{n-1}\end{bmatrix}=\begin{bmatrix}1&1&1&1&\cdots&1\\1&\omega_n&\omega_n^2&\omega_n^3&\cdots&\omega_n^{n-1}\\1&\omega_n^2&\omega_n^4&\omega_n^6&\cdots&\omega_n^{2(n-1)}\\1&\omega_n^3&\omega_n^6&\omega_n^9&\cdots&\omega_n^{3(n-1)}\\\vdots&\vdots&\vdots&\vdots&\ddots&\vdots\\1&\omega_n^{n-1}&\omega_n^{2(n-1)}&\omega_n^{3(n-1)}&\cdots&\omega_n^{(n-1)(n-1)}\end{bmatrix}\begin{bmatrix}a_0\\a_1\\a_2\\a_3\\\vdots\\a_{n-1}\end{bmatrix}\end{gathered}
+$$
+
 
 ## DIT  Radix-2 Cooley-Tukey Algorithm
 
@@ -146,7 +136,7 @@ end
 return y
 ```
 
-​	在第12-14行，我们对$w$进行了累乘，每次乘上$w_n = e^{-j2\pi/n}$。我们将其称为旋转因子。
+​	在第12-14行，我们对$w$进行了累乘，每次乘上$w_n = e^{-j2\pi/n}$。我们将其称为**旋转因子**。
 
 ### 递推加速
 
@@ -170,19 +160,12 @@ for s = 1 to log2(n)
         into one 2^s-element DFT in A[k ... k + 2^s - 1]
 ```
 
-​	最内层的实现细节与回溯实现的内层循环一致，对于每一个$(s,k)$组合，需要进行$2^s$组蝴蝶变换。画出其计算流程图，我们将其称为**蝶形网络**。
+​	最内层的实现细节与回溯实现的内层循环一致，对于每一个$(s,k)$组合，需要进行$2^s$组蝴蝶变换。画出计算流程图如下所示，我们将其称为**蝶形网络**。
 
 <img src="https://tsumgo2003-1323474554.cos.ap-shanghai.myqcloud.com/img/image-20240522114246821.png" alt="image-20240522114246821" style="zoom:33%;" />
 
 - 最左侧是原序列，分为偶数下标$x[0],x[2],x[4],x[6]$和奇数下标$x[1],x[3],x[5],x[7]$两组。对应$x_1[n],x_2[n]$。
-
 - 它们经过$N/2$个点的DFT，得到两组结果：$E[0]\cdots E[3],\quad O[0]\cdots O[3]$。分别对应$F_{even}[k],\quad F_{odd}[k]$。
-
-- 观察流向$X[4]$的数据：箭头上的圆点表示相加，数字表示乘积。此处$N=8$。
-  $$
-  X[4] = E[0] + O[0] * W^4_N = E[0]-O[0]
-  $$
-  刚好与本节开头的式子对应。
 
 继续将$N/2$点的DFT展开，我们将得到如下数据流向图：
 
@@ -260,11 +243,9 @@ N/4的DFT只剩下两个数，展开为：
 
 ### 速度瓶颈
 
-​	对于计算机而言，需要访问位于不同内存地址的数据，才能完成数据交换。当数据量N很大时，由于比特翻转访问的内存空间的不连续，计算机需要反复从内存（Memory）中读取数据到缓存（Cache），造成了时间的浪费。
+​	计算机访问缓存和内存的原理涉及到多级缓存体系结构以及数据的存储和读取方式。现代处理器通常采用三级缓存（L1、L2、L3）和主内存（RAM）来提高数据访问速度。当数据量N很大时，由于比特翻转访问的内存空间的不连续，计算机需要反复从内存（RAM）中读取数据到缓存（Cache），造成了大量的时间浪费。
 
 ​	同时，在内层循环中，计算机需要同时访问内存跨度为$2^k$的两点数据。大多数情况下（k>5左右），这都会要求计算机重新从内存中加载数据到缓存，再进行计算。因而，这种方法的空间效率非常低。
-
-
 
 ### Code Implementation
 
@@ -368,7 +349,7 @@ int main()
 }
 ```
 
-在位翻转操作中，我们通过预处理函数`get_reversed`计算得到了每一个`i`对应的翻转下表`reversed[i]`。
+​	在位翻转操作中，我们通过预处理函数`get_reversed`计算得到了每一个`i`对应的翻转下表`reversed[i]`。
 
 ## DIF C-T Algorithm
 
@@ -395,63 +376,17 @@ $$
 
 ![image-20240622103629192](https://tsumgo2003-1323474554.cos.ap-shanghai.myqcloud.com/img/image-20240622103629192.png)
 
-每一个蝴蝶操作单元将两个数据纳入运算：
+和时域抽取DIT不同，DIF方法的蝴蝶操作单元如下：
 $$
 X=x+y\\
 Y=(x-y)w^j
 $$
 
-## Stockham FFT
-
-​	不管是时域采样（DIT）还是频域采样（DIF），库利-图基算法会导致得到的FFT序列顺序改变，或者需要提前通过比特翻转来改变序列的顺序。在比特翻转过程中，不连续的内存空间导致Cache的利用效率变低，这也是人们在努力研究去解决的问题。
-
-​	Clive Temperton于1991年在《Self-Sorting In-Place Fast Fourier Transforms》一文中给出了适用于混合基数的原地FFT算法，不需要对输入或输出重新排序。通过将计算的中间结果存储到另一片区域，下次变换的时候再存储回来，如此往复，即可省去比特翻转的过程。这也被称为Stockham FFT。
-
-
-
-![image-20240622111040619](https://tsumgo2003-1323474554.cos.ap-shanghai.myqcloud.com/img/image-20240622111040619.png)
-
-[Self-Sorting In-Place Fast Fourier Transforms | SIAM Journal on Scientific Computing](https://epubs.siam.org/doi/10.1137/0912043)
-
-[从Cooley-Tukey FFT到Stockham FFT - Catigeart's Software Development Note](https://catigeart.github.io/stockhamfft/)
-
-
-
-## 工程细节
-
-### 补零操作
-
-加入一个时域信号长度不是$2^k$，如何计算FFT？如果想要提高频域结果的分辨率（由N点的时域信号能得到N点的频域信号），有什么方法？
-
-假设对一个四点信号$x[n]=[1,2,3,4]$，其DTFT记作$X(e^{jw})$。通过对[1,2,3,4]四点的FFT，我们可以得到4个频域的离散点$X[k]$，分别对应$X(e^{jw})$的四个采样值。
-$$
-X[k] = X(e^{jw_k})
-$$
-回忆FFT算法能够得出DTFT在$0\sim 2\pi$上的等间距采样值，所以这里$w_k=\frac {2\pi}{4}k,\ \ k=0,1,2,3$。
-
-> 这里$w_k$​不是单位根
-
-我们在$x[n]$​​的末尾补零，使其有8点。
-
-
-
-### 旋转因子的计算
-
-​	在程序中涉及到了大量旋转因子的计算。很多时候，同一个旋转因子会被反复利用，因此选择合适的计算顺序达到高效复用率，以及选择合适的计算方法得到旋转因子，能够大大提高程序运行效率。
-
-​	一种做法是，将需要用到的旋转因子提前计算并存储，如此便省去了在递推过程中的计算复杂度，但是对旋转因子的调用也要考虑内存连续性问题；另一种更简便的方法是，在递推的同时计算旋转因子。后者有两种实现方式：
-
-1. 循环过程中用一个小数类型（double）累计幅角的变化，在需要时转换为复数类型。
-
-2. 循环过程直接对旋转因子进行累乘，需要时可以直接调用。
-
-​	虽然前者在每次循环中能省去一次复数乘法，但由于幅角转复数过程中使用了欧拉公式$e^{j\varphi} = \cos\varphi +\sin\varphi$，需要反复计算三角函数的值（其底层是由泰勒公式逼近），会极大拖慢运行速度。所以在实际中，还是使用方法2。
-
 ## Radix-4 C-T Algorithm
 
 ### 算法概述
 
-如果点数N是4的整数次方，$N=4^k$，那么采用基4FFT算法可以进一步减少运算量。基-4 FFT将DFT分为4个N/4点的DFT：
+​	如果点数N是4的整数次方，$N=4^k$，那么采用基4FFT算法可以进一步减少运算量。基-4 FFT将DFT分为4个N/4点的DFT：
 $$
 \begin{aligned}
 X[k]&=\sum_{n=0}^{N-1}e^{-j\frac{2\pi}Nnk}x[n]\\
@@ -475,7 +410,6 @@ X[k+\frac {3N}{4}] &=F_0[k] +j * W_N^kF_1[k]-1*W_N^{2k}F_2[k] -j*W_N^{3k}F_3[k]\
 $$
 
 
-> 别忘记$W_N = e^{-j\frac{2\pi}{N}}$
 
 ### 蝶形网络与位翻转
 
@@ -510,6 +444,82 @@ bitreorder
 [FFT-快速傅里叶变换的推导、推广与优化 | StellarWarp](https://stellarwarp.github.io/posts/FFT-part4/):有用，待看
 
 [(37 封私信 / 81 条消息) 快速傅里叶变换（FFT） N不为2的次方怎么做？ - 知乎 (zhihu.com)](https://www.zhihu.com/question/57834941)
+
+## Stockham FFT
+
+计算机访问缓存和内存的原理涉及到多级缓存体系结构以及数据的存储和读取方式。现代处理器通常采用三级缓存（L1、L2、L3）和主内存（RAM）来提高数据访问速度。以下是这些概念的详细解释，以及编写高效代码以优化缓存利用的方法。
+
+### 缓存和内存访问原理
+
+#### 缓存层次结构
+
+1. **L1缓存**：最接近CPU核心，容量小但速度最快。通常分为指令缓存和数据缓存。
+2. **L2缓存**：比L1缓存稍大，速度稍慢。
+3. **L3缓存**：共享缓存，容量更大，速度比L2缓存慢。
+4. **主内存（RAM）**：容量最大，但速度最慢。
+
+#### 工作原理
+
+- **缓存命中**：CPU需要的数据在缓存中，访问速度快。
+- **缓存未命中**：CPU需要的数据不在缓存中，需要从较慢的内存中加载数据到缓存，然后再访问
+
+
+
+
+
+​	不管是时域采样（DIT）还是频域采样（DIF），库利-图基算法会导致得到的FFT序列顺序改变，或者需要提前通过比特翻转来改变序列的顺序。在比特翻转过程中，不连续的内存空间导致Cache的利用效率变低，这也是人们在努力研究去解决的问题。
+
+​	Clive Temperton于1991年在《Self-Sorting In-Place Fast Fourier Transforms》一文中给出了适用于混合基数的原地FFT算法，不需要对输入或输出重新排序。通过将计算的中间结果存储到另一片区域，下次变换的时候再存储回来，如此往复，即可省去比特翻转的过程。这也被称为Stockham FFT。
+
+
+
+![image-20240622111040619](https://tsumgo2003-1323474554.cos.ap-shanghai.myqcloud.com/img/image-20240622111040619.png)
+
+[Self-Sorting In-Place Fast Fourier Transforms | SIAM Journal on Scientific Computing](https://epubs.siam.org/doi/10.1137/0912043)
+
+[从Cooley-Tukey FFT到Stockham FFT - Catigeart's Software Development Note](https://catigeart.github.io/stockhamfft/)
+
+[FFTNTT代码技巧_x + (x >> 31 & mod)-CSDN博客](https://blog.csdn.net/qq_35950004/article/details/103804015)
+
+[详尽的快速傅里叶变换推导与Unity中的实现 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/208511211)
+
+事实上，还是不知道stockham是怎么想到原地排序的
+
+
+
+![image-20240627111223734](C:\Users\user\AppData\Roaming\Typora\typora-user-images\image-20240627111223734.png)
+
+## 工程细节
+
+### 补零操作
+
+加入一个时域信号长度不是$2^k$，如何计算FFT？如果想要提高频域结果的分辨率（由N点的时域信号能得到N点的频域信号），有什么方法？
+
+假设对一个四点信号$x[n]=[1,2,3,4]$，其DTFT记作$X(e^{jw})$。通过对[1,2,3,4]四点的FFT，我们可以得到4个频域的离散点$X[k]$，分别对应$X(e^{jw})$的四个采样值。
+$$
+X[k] = X(e^{jw_k})
+$$
+回忆FFT算法能够得出DTFT在$0\sim 2\pi$上的等间距采样值，所以这里$w_k=\frac {2\pi}{4}k,\ \ k=0,1,2,3$。
+
+> 这里$w_k$​不是单位根
+
+我们在$x[n]$​​的末尾补零，使其有8点。
+
+
+
+### 旋转因子的计算
+
+​	在程序中涉及到了大量旋转因子的计算。很多时候，同一个旋转因子会被反复利用，因此选择合适的计算顺序达到高效复用率，以及选择合适的计算方法得到旋转因子，能够大大提高程序运行效率。
+
+​	一种做法是，将需要用到的旋转因子提前计算并存储，如此便省去了在递推过程中的计算复杂度，但是对旋转因子的调用也要考虑内存连续性问题；另一种更简便的方法是，在递推的同时计算旋转因子。后者有两种实现方式：
+
+1. 循环过程中用一个小数类型（double）累计幅角的变化，在需要时转换为复数类型。
+
+2. 循环过程直接对旋转因子进行累乘，需要时可以直接调用。
+
+​	虽然前者在每次循环中能省去一次复数乘法，但由于幅角转复数过程中使用了欧拉公式$e^{j\varphi} = \cos\varphi +\sin\varphi$，需要反复计算三角函数的值（其底层是由泰勒公式逼近），会极大拖慢运行速度。所以在实际中，还是使用方法2。
+
+
 
 ## Mix-Radix C-T
 
@@ -725,7 +735,7 @@ make distclean
 
 应用别人的成果。
 
-## 多线程加速
+## 并行计算
 
 ​	CUDA（Compute Unified Device Architecture）是由NVIDIA开发的一种并行计算平台和编程模型，允许开发者使用图形处理单元（GPU）来进行通用计算。
 
