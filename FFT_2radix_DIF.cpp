@@ -6,7 +6,7 @@
 typedef unsigned int uint;
 
 const double PI = 3.141592653589793238460;
-const uint MAXN = 1e6 + 5;
+const uint MAXN = (1 << 24) + 5;
 
 /// @brief 实现一个Complex类，包括构造复数、复数加减乘、指数、复数除以整数
 class Complex
@@ -244,6 +244,10 @@ int main()
     // 分别读入序列
     samples1.resize(n);
     samples2.resize(m);
+    // for (int i = 0; i < n; i++)
+    //     scanf("%lf", &samples1[i].real);
+    // for (int i = 0; i < m; i++)
+    //     scanf("%lf", &samples2[i].real);
     for (int i = 0; i < n; i++)
         samples1[i] = Complex(read(), 0);
     for (int i = 0; i < m; i++)

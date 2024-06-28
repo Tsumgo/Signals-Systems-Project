@@ -26,9 +26,10 @@ $$
 
 ### 矩阵表示DFT
 
+​	将信号表示为向量：$X[k]=(y_0,y_1,\cdots,y_{n-1})$，$x[n]=(x_1,x_2,\cdots,x_{n-1})$。则DFT可以写作矩阵乘法的形式：
 
 $$
-\begin{gathered}\begin{bmatrix}y_0\\y_1\\y_2\\y_3\\\vdots\\y_{n-1}\end{bmatrix}=\begin{bmatrix}1&1&1&1&\cdots&1\\1&\omega_n&\omega_n^2&\omega_n^3&\cdots&\omega_n^{n-1}\\1&\omega_n^2&\omega_n^4&\omega_n^6&\cdots&\omega_n^{2(n-1)}\\1&\omega_n^3&\omega_n^6&\omega_n^9&\cdots&\omega_n^{3(n-1)}\\\vdots&\vdots&\vdots&\vdots&\ddots&\vdots\\1&\omega_n^{n-1}&\omega_n^{2(n-1)}&\omega_n^{3(n-1)}&\cdots&\omega_n^{(n-1)(n-1)}\end{bmatrix}\begin{bmatrix}a_0\\a_1\\a_2\\a_3\\\vdots\\a_{n-1}\end{bmatrix}\end{gathered}
+\begin{gathered}\begin{bmatrix}y_0\\y_1\\y_2\\y_3\\\vdots\\y_{n-1}\end{bmatrix}=\begin{bmatrix}1&1&1&1&\cdots&1\\1&\omega_n&\omega_n^2&\omega_n^3&\cdots&\omega_n^{n-1}\\1&\omega_n^2&\omega_n^4&\omega_n^6&\cdots&\omega_n^{2(n-1)}\\1&\omega_n^3&\omega_n^6&\omega_n^9&\cdots&\omega_n^{3(n-1)}\\\vdots&\vdots&\vdots&\vdots&\ddots&\vdots\\1&\omega_n^{n-1}&\omega_n^{2(n-1)}&\omega_n^{3(n-1)}&\cdots&\omega_n^{(n-1)(n-1)}\end{bmatrix}\begin{bmatrix}x_0\\x_1\\x_2\\x_3\\\vdots\\x_{n-1}\end{bmatrix}\end{gathered}
 $$
 
 
@@ -138,7 +139,7 @@ return y
 
 ​	在第12-14行，我们对$w$进行了累乘，每次乘上$w_n = e^{-j2\pi/n}$。我们将其称为**旋转因子**。
 
-### 递推加速
+### 递推：蝶形网络
 
 ​	使用递归的方式计算显然消耗了很多不必要的堆栈资源。在大多数工程场景下，甚至是不允许出现递归代码的。因此我们用**迭代**替代递归操作。那么如何迭代计算FFT？在递推实现的2-radix C-T的算法中，我们引入**蝶形网络**和**位翻转**方法。
 
@@ -150,7 +151,7 @@ return y
 
 ![image-20240622223137251](https://tsumgo2003-1323474554.cos.ap-shanghai.myqcloud.com/img/image-20240622223137251.png)
 
-​	将原始序列按照上图叶子节点的顺序排列，并引入一个变量 s 代表计算树的层次，取值范围为从 1 （最底层） 到 $\log_2 n$ （最顶层）。在每一层，我们要对两个具有 $2^{s-1}$ 个元素的 DFT 进行组合，以产生最后结果。伪代码应当如下所示：
+​	加入我们能够将原始序列按照上图叶子节点的顺序排列，并引入一个变量 s 代表计算树的层次，取值范围为从 1 （最底层） 到 $\log_2 n$ （最顶层）。在每一层，我们要对两个具有 $2^{s-1}$ 个元素的 DFT 进行组合，以产生最后结果。伪代码应当如下所示：
 
 ```python
 for s = 1 to log2(n) 
@@ -169,15 +170,11 @@ for s = 1 to log2(n)
 
 继续将$N/2$点的DFT展开，我们将得到如下数据流向图：
 
-<img src="D:\Study\Study\Courses\24_S1\信号与系统\labs\proj\imgs\1.jpg" alt="1" style="zoom:20%;" />
+xxx
 
-N/4的DFT只剩下两个数，展开为：
+### 递推：比特翻转
 
-<img src="D:\Study\Study\Courses\24_S1\信号与系统\labs\proj\imgs\2.jpg" alt="2" style="zoom:25%;" />
-
-在递推过程中，我们希望按照如计算图中的样子，从N/4 DFT开始增加DFT的规模，逐层计算出DFT的值。
-
-​	我们看到，为了能够顺利递推，输入数据的顺序被打乱了。这种乱序其实有规律，我们把顺序的序号用二进制数列在下表中的左边，把乱序的序号用二进制数列在下表中的右边。
+​	在递推过程中，我们希望序列按照一定的顺序重排，即输入数据的顺序需要被打乱。这种乱序其实有规律，我们把顺序的序号用二进制数列在下表中的左边，把乱序的序号用二进制数列在下表中的右边。
 
 <table>
 	<tbody>
@@ -243,33 +240,19 @@ N/4的DFT只剩下两个数，展开为：
 
 ### 速度瓶颈
 
-​	计算机访问缓存和内存的原理涉及到多级缓存体系结构以及数据的存储和读取方式。现代处理器通常采用三级缓存（L1、L2、L3）和主内存（RAM）来提高数据访问速度。当数据量N很大时，由于比特翻转访问的内存空间的不连续，计算机需要反复从内存（RAM）中读取数据到缓存（Cache），造成了大量的时间浪费。
+​	计算机访问缓存和内存的原理涉及到多级缓存体系结构以及数据的存储和读取方式。现代处理器通常采用三级缓存（L1、L2、L3）和主内存（RAM）来提高数据访问速度。CPU需要的数据在缓存中，访问速度快；CPU需要的数据不在缓存中，需要从较慢的内存中加载数据到缓存，然后再访问。因此，一个优秀的程序应当在内存访问上做优化。
+
+​	我们对C-T算法进行分析：当数据量N很大时，由于比特翻转访问的内存空间的不连续且跨度很大，而缓存容量有限，计算机需要反复从内存中读取数据，造成了大量的时间浪费。
 
 ​	同时，在内层循环中，计算机需要同时访问内存跨度为$2^k$的两点数据。大多数情况下（k>5左右），这都会要求计算机重新从内存中加载数据到缓存，再进行计算。因而，这种方法的空间效率非常低。
 
+​	在下面的章节中，会尝试从内存访问的角度提升计算速度。事实上，后人对FFT在算法上有许多创新，但对于速度的提升十分有限。速度的提升更多是基于**底层优化、并行计算**。
+
 ### Code Implementation
 
-使用C++ 实现递推代码。主要利用了C语言下标从0开始的特性，代码更加符合程序习惯。
+在此仅展现关键C++代码。完整代码详见附件。
 
 ```c++
-#include <iostream>
-#include <complex>
-#include <vector>
-#include <cmath>
-#include <ctime>
-
-typedef unsigned int uint;
-
-const double PI = 3.141592653589793238460;
-
-uint reversed[1 << 20];
-
-// Utility function to calculate the next power of two greater than or equal to 'n'
-int nextPowerOfTwo(int n)
-{
-    return pow(2, ceil(log2(n)));
-}
-
 // Utility function to reverse the bits of a given index 'i'
 // 'bit' is the number of bits needed to represent the indices
 void get_reversed(int bit)
@@ -279,7 +262,6 @@ void get_reversed(int bit)
         reversed[i] = (reversed[i >> 1] >> 1) | ((i & 1) << (bit - 1));
     }
 }
-
 // The FFT function
 // 'samples' is a reference to the vector containing the time-domain sample values
 // 'n' is the number of points in FFT, must be a power of two
@@ -313,40 +295,6 @@ void fft(std::vector<std::complex<double>> &samples, const int n, const int leve
         }
     }
 }
-
-uint N;
-std::vector<std::complex<double> > samples;
-int main()
-{
-    srand(time(0));
-
-    // generate random serise of lenth N
-    N = 1<<20;
-    for (int i = 0;i < N; i++) {
-        samples.push_back(std::complex<double> (rand(), 0));
-    }
-
-    uint tic = clock();
-
-    // Make sure the number of samples is a power of two
-    int n = nextPowerOfTwo(samples.size());
-    samples.resize(n); // pads with zeroes if necessary
-
-    // Calculate the number of levels in the FFT, n = 2^levels
-    int levels = uint(log2(n));
-
-    // get reversed index based on the levels
-    get_reversed(levels);
-
-    // Performing FFT
-    fft(samples, n, levels);
-
-    uint toc = clock();
-
-    std::cout<<"Time Cost:"<<(double) (toc - tic) / CLOCKS_PER_SEC << "s" <<  std::endl;
-
-    return 0;
-}
 ```
 
 ​	在位翻转操作中，我们通过预处理函数`get_reversed`计算得到了每一个`i`对应的翻转下表`reversed[i]`。
@@ -358,11 +306,11 @@ int main()
 $$
 \begin{aligned}X\left\lbrack\text{k\rbrack}\right. & =\sum_{n=0}^{N/2-1}\left\{x\left\lbrack n\right\rbrack\omega_{N}^{nk}+x(n+N/2)\omega_{N}^{(n+N/2)k}\right\}\\  & =\sum_{n=0}^{N/2-1}\left\{x\left\lbrack n\right\rbrack+x(n+N/2)\omega_{N}^{(N/2)k}\right\}\omega_{N}^{nk},\quad0\leq k\leq N-1.\end{aligned}
 $$
-上式中
+​	上式中
 $$
 w_N^{(N/2)k}=e^{-j\pi k}=\begin{cases}&1&k是偶数\\&-1&k是奇数\end{cases}
 $$
-因此，n点的DFT可以分为频域奇数下表、频域偶数下标两部分：
+​	因此，n点的DFT可以分为频域奇数下表、频域偶数下标两部分：
 $$
 \begin{aligned}
 X[2k]& =\sum_{n=0}^{N/2-1}\left\{x[n]+x[n+N/2]\right\}\omega_N^{n*2k}  \\
@@ -372,15 +320,17 @@ X[2k+1]& =\sum_{n=0}^{N/2-1}\{x[n]-x[n+N/2]\}\omega_N^{n*(2k+1)}  \\
 \end{aligned}
 $$
 
-同样的，可将上式看做N/2点DFT的组合。一个8点DFT的数据流向图如下：
+​	同样的，可将上式看做N/2点DFT的组合。一个8点DFT的数据流向图如下：
 
 ![image-20240622103629192](https://tsumgo2003-1323474554.cos.ap-shanghai.myqcloud.com/img/image-20240622103629192.png)
 
-和时域抽取DIT不同，DIF方法的蝴蝶操作单元如下：
+​	和时域抽取DIT不同，DIF方法的蝴蝶操作单元如下：
 $$
 X=x+y\\
 Y=(x-y)w^j
 $$
+
+​	在DIF 的库利图基算法中，输出数据的顺序被打乱了，因此需要在最后，对输出数据进行比特翻转操作。
 
 ## Radix-4 C-T Algorithm
 
@@ -390,17 +340,16 @@ $$
 $$
 \begin{aligned}
 X[k]&=\sum_{n=0}^{N-1}e^{-j\frac{2\pi}Nnk}x[n]\\
-&=\sum_{m=0}^{N/4-1} x[4m]e^{-j\frac {2\pi}{N}*(4m)k}+x[4m+1]e^{-j\frac{2\pi}{N}*(4m+1)k}+x[4m+2]e^{-j\frac{2\pi}{N}*(4m+2)k}+x[4m+3]e^{-j\frac{2\pi}{N}*(4m+3)k}\\
-&=\sum_{m=0}^{N/4-1} x[4m]W_{N/4}^{mk}
-+W_{N}^k\sum_{m=0}^{N/4-1}x[4m+1]W_{N/4}^{mk}
-+W_{N}^{2k}\sum_{m=0}^{N/4-1}x[4m+2]W_{N/4}^{(4m+2)k}+W_{N}^{3k}\sum_{m=0}^{N/4-1}x[4m+3]W_{N/4}^{mk}\\
+
+&=\sum_{m=0}^{N/4-1} x[4m]w_{N/4}^{mk}+W_{N}^k\sum_{m=0}^{N/4-1}x[4m+1]w_{N/4}^{mk}\\
+&\quad\ \  +w_{N}^{2k}\sum_{m=0}^{N/4-1}x[4m+2]w_{N/4}^{(4m+2)k}+w_{N}^{3k}\sum_{m=0}^{N/4-1}x[4m+3]w_{N/4}^{mk}\\
 &=F_0[k] + W_N^kF_1[k]+W_N^{2k}F_2[k] + W_N^{3k}F_3[k]
 \end{aligned}
 $$
 
-上式中，$F_i[k](i=0,1,2,3)$分别对应序列$x[4m+i],(m = 0 \cdots N/4-1)$ 的DFT的第$k$项。显然$k\leq \frac N4 - 1$
+​	上式中，$F_i[k](i=0,1,2,3)$分别对应序列$x[4m+i],(m = 0 \cdots N/4-1)$ 的DFT的第$k$项。显然$k\leq \frac N4 - 1$
 
-进一步推导，可得到$k>\frac N4$时DFT的值：
+​	进一步推导，可得到$k>\frac N4$时DFT的值：
 $$
 \begin{aligned}
 X[k+\frac N4] &=F_0[k] -j * W_N^kF_1[k]-1*W_N^{2k}F_2[k] + j*W_N^{3k}F_3[k]\\
@@ -409,22 +358,24 @@ X[k+\frac {3N}{4}] &=F_0[k] +j * W_N^kF_1[k]-1*W_N^{2k}F_2[k] -j*W_N^{3k}F_3[k]\
 \end{aligned}
 $$
 
-
-
-### 蝶形网络与位翻转
-
-### 复杂度分析
-
-### 计算优化
-
-### 底层优化
-
-对于逆变换，有：
+​	对于逆变换，有：
 $$
 x[k+\frac N4]=F_0[k] + j * W_N^k F_1[k] -1* W_N^{2k}F_2[k] -j* W_N^{3k} F_3[k]\\
 x[k+\frac {2N}4] = F_0[k] - 1 * W_N^kF_1[k]+1*W_N^{2k}F_2[k] -1 * W_n^{3k} F_3[k]\\
 x[k+\frac {3N}4] = F_0[k] - j * W_N^KF_1[k]-1*W_N^{2k} F_2[k] + j * w_N^{3k} F_3[k]
 $$
+​	
+
+​	类似的，我们可以画出其数据流向图：
+
+### 蝶形网络与位翻转
+
+### 蝶形网络的优化
+
+
+
+
+
 [【位操作笔记】详解一种高效位反转算法-CSDN博客](https://blog.csdn.net/u012028275/article/details/108895271)：只能用于一位一位的翻转
 
 [FFT & NTT 及其简单优化 - 樱雪喵 - 博客园 (cnblogs.com)](https://www.cnblogs.com/ying-xue/p/17676005.html)：三次变两次优化。NTT算法
@@ -445,27 +396,30 @@ bitreorder
 
 [(37 封私信 / 81 条消息) 快速傅里叶变换（FFT） N不为2的次方怎么做？ - 知乎 (zhihu.com)](https://www.zhihu.com/question/57834941)
 
+## Mix-Radix C-T
+
+​	我们假设$N=N_1*N_2$
+$$
+X[k]=\sum_{j=0}^{N-1}x\left\lbrack j\right\rbrack\omega_{N}^{jk},\quad0\leq k\leq N-1
+$$
+​	如果N能被分解为$N_1*N_2$，那么上式的下标$k,j$可以表示为：
+$$
+j=j_1+j_2N_1,\quad k=k_2+k_1N_2
+$$
+​	把X[k]，x[j]分别用二元组来表示：
+$$
+x[j]=x[j_1,j_2],\quad0\leq j_1\leq n_1-1,\quad0\leq j_2\leq n_2-1\\
+X[k]=X[k_2,k_1],\quad0\leq k_1\leq n_1-1,\quad0\leq k_2\leq n_2-1
+$$
+​	例如，$N=6=2*3$，那么$X[0]=X[0+0*3],X[]$1
+
+[Mixed-Radix Cooley-Tukey FFT (stanford.edu)](https://ccrma.stanford.edu/~jos/st/Mixed_Radix_Cooley_Tukey_FFT.html)
+
+[Mixed-Radix FFT Algorithms | SpringerLink](https://link.springer.com/chapter/10.1007/978-981-13-9965-7_3)
+
+
+
 ## Stockham FFT
-
-计算机访问缓存和内存的原理涉及到多级缓存体系结构以及数据的存储和读取方式。现代处理器通常采用三级缓存（L1、L2、L3）和主内存（RAM）来提高数据访问速度。以下是这些概念的详细解释，以及编写高效代码以优化缓存利用的方法。
-
-### 缓存和内存访问原理
-
-#### 缓存层次结构
-
-1. **L1缓存**：最接近CPU核心，容量小但速度最快。通常分为指令缓存和数据缓存。
-2. **L2缓存**：比L1缓存稍大，速度稍慢。
-3. **L3缓存**：共享缓存，容量更大，速度比L2缓存慢。
-4. **主内存（RAM）**：容量最大，但速度最慢。
-
-#### 工作原理
-
-- **缓存命中**：CPU需要的数据在缓存中，访问速度快。
-- **缓存未命中**：CPU需要的数据不在缓存中，需要从较慢的内存中加载数据到缓存，然后再访问
-
-
-
-
 
 ​	不管是时域采样（DIT）还是频域采样（DIF），库利-图基算法会导致得到的FFT序列顺序改变，或者需要提前通过比特翻转来改变序列的顺序。在比特翻转过程中，不连续的内存空间导致Cache的利用效率变低，这也是人们在努力研究去解决的问题。
 
@@ -521,36 +475,15 @@ $$
 
 
 
-## Mix-Radix C-T
-
-​	我们假设$N=N_1*N_2$
-$$
-X[k]=\sum_{j=0}^{N-1}x\left\lbrack j\right\rbrack\omega_{N}^{jk},\quad0\leq k\leq N-1
-$$
-​	如果N能被分解为$N_1*N_2$，那么上式的下标$k,j$可以表示为：
-$$
-j=j_1+j_2N_1,\quad k=k_2+k_1N_2
-$$
-​	把X[k]，x[j]分别用二元组来表示：
-$$
-x[j]=x[j_1,j_2],\quad0\leq j_1\leq n_1-1,\quad0\leq j_2\leq n_2-1\\
-X[k]=X[k_2,k_1],\quad0\leq k_1\leq n_1-1,\quad0\leq k_2\leq n_2-1
-$$
-​	例如，$N=6=2*3$，那么$X[0]=X[0+0*3],X[]$1
-
-[Mixed-Radix Cooley-Tukey FFT (stanford.edu)](https://ccrma.stanford.edu/~jos/st/Mixed_Radix_Cooley_Tukey_FFT.html)
-
-[Mixed-Radix FFT Algorithms | SpringerLink](https://link.springer.com/chapter/10.1007/978-981-13-9965-7_3)
 
 
-
-## FFT-Convolution
+## FFT-Convolve
 
 ### 卷积定义
 
 两个n点时域信号，定义卷积运算
 
-### FFT-Convolution
+### FFT-Convolve
 
 下面，我们借助FFT与IFFT（傅里叶逆变换）来实现卷积操作。具体流程如下：
 
@@ -714,8 +647,6 @@ sudo make install
    }
    ```
 
-   
-
 5. 在项目目录下新建`build`目录，用于构建项目。进入`build`，编译项目。
 
    ```bash
@@ -778,269 +709,6 @@ https://blog.csdn.net/qq_41094058/article/details/116207333
 
 
 ### 2-radix DIF C-T FFT
-
-注：代码可以直接运行。
-
-```c++
-#include <iostream>
-#include <vector>
-#include <cmath>
-#include <complex>
-
-typedef unsigned int uint;
-
-const double PI = 3.141592653589793238460;
-const uint MAXN = 1e6 + 5;
-
-/// @brief 实现一个Complex类，包括构造复数、复数加减乘、指数、复数除以整数
-class Complex
-{
-public:
-    double real, imag;
-
-    // 构造函数
-    Complex(double r = 0, double i = 0) : real(r), imag(i) {}
-
-    // 复数的加法运算
-    Complex operator+(const Complex &other) const
-    {
-        return Complex(real + other.real, imag + other.imag);
-    }
-
-    // 复数的减法运算
-    Complex operator-(const Complex &other) const
-    {
-        return Complex(real - other.real, imag - other.imag);
-    }
-
-    // 复数的乘法运算
-    Complex operator*(const Complex &other) const
-    {
-        return Complex(real * other.real - imag * other.imag,
-                       real * other.imag + imag * other.real);
-    }
-    // 复数除以整数
-    Complex operator/(const int &other) const
-    {
-        return Complex(real / other, imag / other);
-    }
-    // 计算复数的指数
-    Complex exp() const
-    {
-        double e = std::exp(real);
-        return Complex(e * std::cos(imag), e * std::sin(imag));
-    }
-    // 打印复数
-    void print() const
-    {
-        if (imag >= 0)
-            std::cout << real << " + " << imag << "i" << std::endl;
-        else
-            std::cout << real << " - " << -imag << "i" << std::endl;
-    }
-};
-
-// reversed[i]用于存放下标i比特翻转后的新下标，在卷积中，最多用到 MAXN*4 个下标
-uint reversed[MAXN << 2];
-/// @brief 计算reversed数组
-/// @param bit：最大位数
-void get_reversed(int bit)
-{
-    for (uint i = 0; i < (1 << bit); i++)
-    {
-        reversed[i] = (reversed[i >> 1] >> 1) | ((i & 1) << (bit - 1));
-    }
-}
-/// @brief 返回2的整数次幂2^k，满足 2^(k-1) < n <= 2^k
-/// @param n：序列长度
-/// @return 2^k
-int nextPowerOfTwo(int n)
-{
-    return pow(2, ceil(log2(n)));
-}
-
-/// @brief 基-2，频域采样FFT
-/// @param samples：原始信号。函数将用变换后的频域信号覆盖原始信号
-/// @param n：原始信号长度。保证n=2的整数次幂。
-void fft(std::vector<Complex> &samples, const uint n)
-{
-    // 枚举DFT点数，每次循环size/2
-    for (int size = n; size > 1; size >>= 1)
-    {
-        Complex w_m = Complex(0, -2.0 * PI / size).exp();
-        Complex w = Complex(1, 0);
-        // 循环size/2 次。size为当前DFT块的大小。
-        for (int j = 0; j < size / 2; j++)
-        {
-            // 内层循环对使用相同旋转因子w的蝴蝶算子进行枚举，使相同的w得以复用
-            // 循环 n/size 次
-            for (int i = j; i < n; i += size) // 每次跨越size。事实上，内层循环仍然存在内存区域跨度过大的问题
-            {
-                Complex temp = samples[i] - samples[i + size / 2];
-                samples[i] = samples[i] + samples[i + size / 2];
-                samples[i + size / 2] = temp * w;
-            }
-            w = w * w_m;
-        }
-    }
-    // 位翻转
-    for (uint i = 0; i < n; i++)
-    {
-        if (reversed[i] > i)
-        {
-            std::swap(samples[i], samples[reversed[i]]);
-        }
-    }
-}
-/// @brief 基-2 频域采样傅里叶逆变换
-/// @param samples 频域信号
-/// @param n   信号长度，保证n=2^k
-void ifft(std::vector<Complex> &samples, const uint n)
-{
-    // 枚举DFT点数，每次循环size/2
-    for (int size = n; size > 1; size >>= 1)
-    {
-        Complex w_m = Complex(0, 2.0 * PI / size).exp(); // 旋转因子为正
-        Complex w = Complex(1, 0);
-        // 循环size/2 次。size为当前DFT块的大小。
-        for (int j = 0; j < size / 2; j++)
-        {
-            // 内层循环对使用相同旋转因子w的蝴蝶算子进行枚举，使相同的w得以复用
-            for (int i = j; i < n; i += size) // 每次跨越size。事实上，内层循环仍然存在内存区域跨度过大的问题
-            {
-                Complex temp = samples[i] - samples[i + size / 2];
-                samples[i] = samples[i] + samples[i + size / 2];
-                samples[i + size / 2] = temp * w;
-            }
-            w = w * w_m;
-        }
-    }
-
-    // 比特翻转，将结果重新排列
-    for (uint i = 0; i < n; i++)
-    {
-        if (reversed[i] > i)
-        {
-            std::swap(samples[i], samples[reversed[i]]);
-        }
-    }
-    for (register int i = 0; i < n; i++)
-        samples[i] = samples[i] / n;
-}
-
-/// @brief 使用2次fft来计算卷积
-/// @param A：时域信号A
-/// @param B：时域信号B
-/// @param Results
-void fftConv_2times(std::vector<Complex> &A, std::vector<Complex> &B, std::vector<Complex> &Results)
-{
-    // 实际卷积长度
-    int len = A.size() + B.size() - 1;
-    // 运算需要的长度
-    int n = nextPowerOfTwo(len);
-    // Calculate the number of levels in the FFT, n = 2^levels
-    int levels = uint(log2(n));
-    // 计算reversed数组
-    get_reversed(levels);
-
-    // 保证A的长度大于等于B的长度，方便后续操作。
-    if (A.size() < B.size())
-        std::swap(A, B);
-
-    Results.resize(n);
-    A.resize(n);
-    // 将B的实部填充到A的虚部
-    for (register int i = 0; i < B.size(); i++)
-    {
-        A[i] = Complex(A[i].real, B[i].real);
-    }
-    fft(A, n);
-    for (register int i = 0; i < n; i++)
-    {
-        Results[i] = A[i] * A[i];
-    }
-    ifft(Results, n);
-    for (register int i = 0; i < n; i++)
-    {
-        Results[i] = Complex(Results[i].imag / 2, 0);
-    }
-    Results.resize(len);
-}
-/// @brief 使用3次fft来计算卷积
-/// @param A：时域信号A
-/// @param B：时域信号B
-/// @param Results
-void fftConv_3times(std::vector<Complex> &A, std::vector<Complex> &B, std::vector<Complex> &Results)
-{
-    // 实际卷积长度
-    int len = A.size() + B.size() - 1;
-    // 运算需要的长度
-    int n = nextPowerOfTwo(len);
-    // 计算FFT层数。n = 2^levels
-    int levels = uint(log2(n));
-    // 计算每个下标i的位翻转结果reversed[i]
-    get_reversed(levels);
-    // 零填充。padding操作
-    A.resize(n);
-    B.resize(n);
-    Results.resize(n);
-
-    // 对序列A和B进行FFT变换
-    fft(A, n);
-    fft(B, n);
-
-    // element-wise multiplication
-    for (int i = 0; i < n; i++)
-        Results[i] = A[i] * B[i];
-
-    // 逆变换
-    ifft(Results, n);
-
-    // 将卷积结果长度限制为 (A.size() + B.size() - 1)
-    Results.resize(len);
-}
-inline int read()
-{
-    char c = getchar();
-    int x = 0, f = 1;
-    while (c < '0' || c > '9')
-    {
-        if (c == '-')
-            f = -1;
-        c = getchar();
-    }
-    while (c >= '0' && c <= '9')
-    {
-        x = x * 10 + c - '0';
-        c = getchar();
-    }
-    return x * f;
-}
-std::vector<Complex> samples1, samples2;
-std::vector<Complex> Results;
-int main()
-{
-    // 分别读入序列长度n,m
-    int m, n;
-    n = read(), m = read();
-
-    // 分别读入序列
-    samples1.resize(n);
-    samples2.resize(m);
-    for (int i = 0; i < n; i++)
-        samples1[i] = Complex(read(), 0);
-    for (int i = 0; i < m; i++)
-        samples2[i] = Complex(read(), 0);
-
-    fftConv_2times(samples1, samples2, Results);
-
-	// 输出卷积结果
-    for (int i = 0; i < Results.size(); i++)
-        printf("%d ", (int)(Results[i].real + 0.5));
-
-    return 0;
-}
-```
 
 
 

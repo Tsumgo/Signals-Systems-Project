@@ -184,41 +184,6 @@ void fftConv(std::vector<Complex> &A, std::vector<Complex> &B, std::vector<Compl
     }
     Results.resize(len);
 }
-/// @brief 使用3次fft来计算卷积
-/// @param A
-/// @param B
-/// @param Results
-void fftConv_3times(std::vector<Complex> &A, std::vector<Complex> &B, std::vector<Complex> &Results)
-{
-    // 实际卷积长度
-    int len = A.size() + B.size() - 1;
-    // 运算需要的长度
-    int n = nextPowerOfTwo(len);
-    // Calculate the number of levels in the FFT, n = 2^levels
-    int levels = uint(log2(n));
-    // get reversed index based on the levels. Calculate the array reversed[].
-    get_reversed(levels);
-    // Resize A and B to n, filling with zeros
-    A.resize(n);
-    B.resize(n);
-    Results.resize(n);
-
-    // Perform FFT on both A and B
-    fft(A, n);
-    fft(B, n);
-
-    // Point-wise multiply the FFT results
-    for (int i = 0; i < n; i++)
-    {
-        Results[i] = A[i] * B[i];
-    }
-
-    // Perform IFFT on the result
-    ifft(Results, n);
-
-    // Optionally, resize Results to the original convolution size (A.size() + B.size() - 1)
-    Results.resize(len);
-}
 inline int read()
 {
     char c = getchar();
@@ -242,21 +207,15 @@ int main()
 {
     int m, n;
     scanf("%d%d", &n, &m);
-    // n++, m++;
     samples1.resize(n);
     samples2.resize(m);
-    // for (int i = 0; i < n; i++)
-    //     scanf("%lf", &samples1[i].real);
-    // for (int i = 0; i < m; i++)
-    //     scanf("%lf", &samples2[i].real);
     for (int i = 0; i < n; i++)
-        samples1[i] = Complex(read(), 0);
+        scanf("%lf", &samples1[i].real);
     for (int i = 0; i < m; i++)
-        samples2[i] = Complex(read(), 0);
+        scanf("%lf", &samples2[i].real);
 
     fftConv(samples1, samples2, Results);
     // output the results
-
     for (int i = 0; i < Results.size(); i++)
         printf("%d ", (int)(Results[i].real + 0.5));
 
