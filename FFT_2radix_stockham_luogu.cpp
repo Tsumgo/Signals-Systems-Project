@@ -135,9 +135,6 @@ void fftConv(std::vector<Complex> &A, std::vector<Complex> &B, std::vector<Compl
     int len = A.size() + B.size() - 1;
     // 运算需要的长度
     int n = nextPowerOfTwo(len);
-    // Calculate the number of levels in the FFT, n = 2^levels
-    int levels = uint(log2(n));
-    // get reversed index based on the levels. Calculate the array reversed[].
 
     // 保证A的长度大于等于B的长度，方便后续操作。
     if (A.size() < B.size())
@@ -186,7 +183,7 @@ int main()
 {
     int m, n;
     scanf("%d%d", &n, &m);
-    n++, m++;
+    // n++, m++;
     samples1.resize(n);
     samples2.resize(m);
     for (int i = 0; i < n; i++)
@@ -195,8 +192,8 @@ int main()
         samples2[i] = Complex(read(), 0);
 
     fftConv(samples1, samples2, Results);
-    // output the results
 
+    // output the results
     for (int i = 0; i < Results.size(); i++)
         printf("%d ", (int)(Results[i].real + 0.5));
 

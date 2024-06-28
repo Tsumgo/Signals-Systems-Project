@@ -242,13 +242,17 @@ int main()
 {
     int m, n;
     scanf("%d%d", &n, &m);
-    n++, m++;
+    // n++, m++;
     samples1.resize(n);
     samples2.resize(m);
     for (int i = 0; i < n; i++)
-        samples1[i] = Complex(read(), 0);
+        scanf("%lf", &samples1[i].real);
     for (int i = 0; i < m; i++)
-        samples2[i] = Complex(read(), 0);
+        scanf("%lf", &samples2[i].real);
+    // for (int i = 0; i < n; i++)
+    //     samples1[i] = Complex(read(), 0);
+    // for (int i = 0; i < m; i++)
+    //     samples2[i] = Complex(read(), 0);
 
     fftConv(samples1, samples2, Results);
     // output the results

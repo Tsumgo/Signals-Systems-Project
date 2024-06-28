@@ -62,6 +62,7 @@ int main()
 
     std::mt19937_64 rng(std::random_device{}()); // Random number generator
 
+    // 生成浮点数据
     for (int testCount = 0; testCount < totalTest; ++testCount)
     {
         int n = sizes[testCount][0], m = sizes[testCount][1];
@@ -71,6 +72,7 @@ int main()
         writeToFile(filename, n, m, seq1, seq2);
     }
 
+    // 生成整数数据
     for (int testCount = 0; testCount < totalTest; ++testCount)
     {
         int n = sizes[testCount][0], m = sizes[testCount][1];

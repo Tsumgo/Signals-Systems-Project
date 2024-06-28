@@ -12,8 +12,8 @@ using namespace std;
 /// @param duration     返回时长
 void runTest(const string &exePath, const string &inputFile, const string &outputFile, chrono::duration<double> &duration)
 {
-    // 使用powershell命令行运行程序，输入inputFile重定向到可执行文件，输出重定向到outputFile
-    string command = "get-content " + inputFile + " | " + exePath + " > " + outputFile;
+    // 使用 cmd 命令行运行程序，输入inputFile重定向到可执行文件，输出重定向到outputFile
+    string command = exePath + " < " + inputFile + " > " + outputFile;
 
     // 开始计时
     auto start = chrono::high_resolution_clock::now();
@@ -42,9 +42,11 @@ bool compareFiles(const string &file1, const string &file2)
 int main()
 {
     // 指定运行目录、输入输出目录、标准输出文件
-    std::string exePath = "./build/FFT_2radix_luogu.exe";
-    std::string inputFolder = "./datas";
-    std::string outputFolder = "./datas";
+    // 标准答案 std_out{i}.out 使用 FFT_2radix.exe 生成
+    // 根据数据类型的不同，分别存放于double、integer文件夹下。
+    string exePath = ".\\build\\FFT_2radix_DIF.exe";
+    string inputFolder = ".\\datas\\double";
+    string outputFolder = ".\\datas\\double";
 
     // 指定测试集个数。
     int numTests = 10;
@@ -53,19 +55,20 @@ int main()
     for (int i = 0; i < numTests; ++i)
     {
         // to_string 函数将整数转换为字符串
-        string inputFile = inputFolder + "/data" + to_string(i) + ".in";
-        string outputFile = outputFolder + "/std_out" + to_string(i) + ".out";
+        string inputFile = inputFolder + "\\data" + to_string(i) + ".in";       // data{i}.in
+        string outputFile = outputFolder + "\\std_out" + to_string(i) + ".out"; // output.out
 
         // 运行、测试时间。
         chrono::duration<double> duration;
         runTest(exePath, inputFile, outputFile, duration);
 
         // 比较输入、输出异同
-        // bool isCorrect = compareFiles(outputFile, standardOutputFile);
+        string standardOutputFile = ".\\datas\\double\\std_out" + to_string(i) + ".out"; // std_out{i}.out
+        bool isCorrect = compareFiles(outputFile, standardOutputFile);
 
-        // cout << "Test " << i << ": "
-        //      << "Time = " << duration.count() << "s, "
-        //      << (isCorrect ? "Correct" : "Incorrect") << std::endl;
+        cout << "Test " << i << ": "
+             << "Time = " << duration.count() << "s, "
+             << (isCorrect ? "Correct" : "Incorrect") << std::endl;
     }
 
     return 0;
