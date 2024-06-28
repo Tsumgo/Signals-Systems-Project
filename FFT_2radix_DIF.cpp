@@ -239,7 +239,6 @@ int main()
     // 分别读入序列长度n,m
     int m, n;
     n = read(), m = read();
-    // n++, m++;
 
     // 分别读入序列
     samples1.resize(n);

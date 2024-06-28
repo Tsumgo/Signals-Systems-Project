@@ -718,17 +718,19 @@ https://blog.csdn.net/qq_41094058/article/details/116207333
 
 #### FFTW
 
-N = 1<<24;
+| 数据规模 | 数据类型 | 运行时长 |
+| -------- | -------- | -------- |
+|          |          |          |
+|          |          |          |
+|          |          |          |
+
+![image-20240628144803966](C:\Users\user\AppData\Roaming\Typora\typora-user-images\image-20240628144803966.png)
+
+![image-20240628144917106](C:\Users\user\AppData\Roaming\Typora\typora-user-images\image-20240628144917106.png)
 
 
 
-![image-20240608234136488](C:\Users\user\AppData\Roaming\Typora\typora-user-images\image-20240608234136488.png)
 
-
-
-N = (1<<24) + 100;
-
-![image-20240608234208955](C:\Users\user\AppData\Roaming\Typora\typora-user-images\image-20240608234208955.png)
 
 
 

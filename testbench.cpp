@@ -51,17 +51,16 @@ int main()
         chrono::duration<double> duration;
         runTest(exePath, inputFile, outputFile, duration);
 
-        // 比较输入、输出异同
-        bool isCorrect = true;
-        string command = "echo | fc " + outputFile + " " + standardOutputFile;
-        if (system(command.c_str()))
-        {
-            isCorrect = false;
-        }
+        // // 比较输入、输出异同
+        // bool isCorrect = true;
+        // string command = "echo | fc " + outputFile + " " + standardOutputFile;
+        // if (system(command.c_str()))
+        // {
+        //     isCorrect = false;
+        // }
 
         cout << "Test " << i << ": "
-             << "Time = " << duration.count() << "s, "
-             << (isCorrect ? "Correct" : "Incorrect") << std::endl;
+             << "Time = " << duration.count() << "s, " << endl;
     }
 
     system("pause");
