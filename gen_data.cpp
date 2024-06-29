@@ -8,8 +8,8 @@ using namespace std;
 
 // 需要生成数据，则取消第一行注释
 // 需要生成标准输出，则取消第二行注释
-// #define GENERATE_DATA
-#define GENERATE_STDOUT
+#define GENERATE_DATA
+// #define GENERATE_STDOUT
 
 /// @brief 生成随机浮点数序列
 /// @param size 序列长度
@@ -88,7 +88,20 @@ void runTest(const string &exePath, const string &inputFile, const string &outpu
 
 int main()
 {
-    int sizes[][2] = {{2, 3}, {16, 17}, {1024, 1024}, {1031, 1029}, {65536, 65536}, {65537, 65537}, {1 << 20, 1 << 21}, {(1 << 20) + 1, (1 << 20) + 1}, {(1 << 24), (1 << 24)}, {(1 << 22) - 1, (1 << 22) - 1}};
+    // Convolution size
+    int sizes[][2] = {
+        {2, 3},                         // Test 0:4
+        {16, 17},                       // Test 1:32
+        {1024, 1024},                   // Test 2:2047
+        {1031, 1029},                   // Test 3:2059
+        {65536, 65536},                 // Test 4:2^17-1
+        {65537, 65537},                 // Test 5:2^17+1
+        {1 << 20, 1 << 21},             // Test 6:3 * 2^20 - 1
+        {(1 << 20) + 1, (1 << 20) + 1}, // Test 7:2^21 + 1
+        {(1 << 22), (1 << 22) - 1},     // Test 8:2^22 - 2
+        {(1 << 23), (1 << 23) + 1},     // Test 9:2^24
+    };
+
     int totalTest = 10;
 
     std::mt19937_64 rng(std::random_device{}()); // Random number generator

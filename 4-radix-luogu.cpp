@@ -7,7 +7,7 @@
 typedef unsigned int uint;
 
 const double PI = 3.141592653589793238460;
-const uint MAXN = 1e6 + 5;
+const uint MAXN = (1 << 24) + 1;
 
 class Complex
 {
@@ -75,11 +75,25 @@ void get_reversed_by_2_bits(int bit)
         reversed[i] = (reversed[i >> 2] >> 2) | ((i & 3) << (bit - 2));
     }
 }
+
+/// @brief 计算n点的DFT。其中n保证是4的指数
+/// @param samples 原始序列
+/// @param n 序列长度。
 void fft_4Radix(std::vector<Complex> &samples, const int n)
 {
-#ifdef _VERBOSE
-    puts("FFT Timer Cost:");
-#endif
+    // w_m是以n为基底的单位根，w_m = exp(-2 * PI * j / n)
+    Complex w_m = Complex(0, -2 * PI / n).exp();
+    // W是存放n/4个单位根的数组，为了内存访问的连续性，用W[3 * i]表示w_m^{i}
+    // W[3 * i + 1]表示w_m^{2i}，W[3 * i + 2]表示w_m^{3i}
+    std::vector<Complex> W(3 * n / 4);
+    W[0] = W[1] = W[2] = Complex(1, 0);
+    for (register int i = 1; i < n / 4; i++)
+    {
+        W[3 * i] = W[3 * (i - 1)] * w_m;        // wm^{i}
+        W[3 * i + 1] = W[3 * i] * W[3 * i];     // wm^{2i}
+        W[3 * i + 2] = W[3 * i + 1] * W[3 * i]; // wm^{3i}
+    }
+
     // bit reverse the input samples
     for (register int i = 0; i < n; i++)
         if (reversed[i] > i)
@@ -89,29 +103,15 @@ void fft_4Radix(std::vector<Complex> &samples, const int n)
     for (register int size = 4; size <= n; size <<= 2)
     {
         uint tic = clock();
-        Complex w_m = Complex(0, -2 * PI / size).exp();
-
-        // compute the tiggle factor of size for saving time
-        // there are 3 * size / 4 elements need to be stored.
-        std::vector<Complex> w1(size / 4);
-        std::vector<Complex> w2(size / 4);
-        std::vector<Complex> w3(size / 4);
-        w1[0] = w2[0] = w3[0] = Complex(1, 0);
-        for (register int j = 1; j < size / 4; j++)
-        {
-            w1[j] = w1[j - 1] * w_m;
-            w2[j] = w1[j] * w1[j];
-            w3[j] = w2[j] * w1[j];
-        }
-
         for (register int m = 0; m < n; m += size)
         {
-            for (register int k = 0; k < size / 4; k++) // one butterfly unit
+            for (register int k = 0; k < size / 4; k++) // one butterfly unit, use wm^{-2 PI *j / size}
             {
                 // 3 Complex multiples, 8 Complex addition
-                Complex W1 = w1[k]; // w1
-                Complex W2 = w2[k]; // w1^2
-                Complex W3 = w3[k]; // w1^3
+                int index = n / size * k;      // 该蝶形单元使用 w_{size}^k 作为基本单位，换算到以 w_{n} 作为基底
+                Complex W1 = W[3 * index];     // wm^{k}
+                Complex W2 = W[3 * index + 1]; // wm^{2k}
+                Complex W3 = W[3 * index + 2]; // wm^{3k}
 
                 Complex P0 = samples[m + k];
                 Complex P1 = W1 * samples[m + k + size / 4];
@@ -129,18 +129,23 @@ void fft_4Radix(std::vector<Complex> &samples, const int n)
                 samples[m + k + 3 * size / 4] = U2 + Complex(-U3.imag, U3.real); // P0 - jP1 - P2 + jP3
             }
         }
-#ifdef _VERBOSE
-        uint toc = clock();
-        std::cout << "butterfly Unit Size: " << size << "; Time Cost: " << (double)(toc - tic) / CLOCKS_PER_SEC << "s" << std::endl;
-#endif
     }
 }
 
 void ifft_4Radix(std::vector<Complex> &samples, const int n)
 {
-#ifdef _VERBOSE
-    puts("IFFT Timer Cost:");
-#endif
+    std::vector<Complex> W(3 * n / 4);
+    // 使用指数为正的旋转因子。
+    Complex w_m = Complex(0, 2 * PI / n).exp();
+
+    W[0] = W[1] = W[2] = Complex(1, 0);
+    for (register int i = 1; i < n / 4; i++)
+    {
+        W[3 * i] = W[3 * (i - 1)] * w_m;        // wm^{i}
+        W[3 * i + 1] = W[3 * i] * W[3 * i];     // wm^{2i}
+        W[3 * i + 2] = W[3 * i + 1] * W[3 * i]; // wm^{3i}
+    }
+
     // bit reverse the input samples
     for (int i = 0; i < n; i++)
         if (reversed[i] > i)
@@ -150,28 +155,16 @@ void ifft_4Radix(std::vector<Complex> &samples, const int n)
     for (int size = 4; size <= n; size <<= 2)
     {
         uint tic = clock();
-        Complex w_m = Complex(0, 2 * PI / size).exp(); // Use positive sign for IFFT
-
-        // compute the twiddle factor of size for saving time
-        std::vector<Complex> w1(size / 4);
-        std::vector<Complex> w2(size / 4);
-        std::vector<Complex> w3(size / 4);
-        w1[0] = w2[0] = w3[0] = Complex(1, 0);
-        for (int j = 1; j < size / 4; j++)
-        {
-            w1[j] = w1[j - 1] * w_m;
-            w2[j] = w1[j] * w1[j];
-            w3[j] = w2[j] * w1[j];
-        }
 
         for (int m = 0; m < n; m += size)
         {
             for (int k = 0; k < size / 4; k++) // one butterfly unit
             {
                 // 3 Complex multiples, 8 Complex addition
-                Complex W1 = w1[k]; // w1
-                Complex W2 = w2[k]; // w1^2
-                Complex W3 = w3[k]; // w1^3
+                int index = n / size * k;      // 该蝶形单元使用 w_{size}^k 作为基本单位，换算到以 w_{n} 作为基底
+                Complex W1 = W[3 * index];     // wm^{k}
+                Complex W2 = W[3 * index + 1]; // wm^{2k}
+                Complex W3 = W[3 * index + 2]; // wm^{3k}
 
                 Complex P0 = samples[m + k];
                 Complex P1 = W1 * samples[m + k + size / 4];
@@ -189,10 +182,6 @@ void ifft_4Radix(std::vector<Complex> &samples, const int n)
                 samples[m + k + 3 * size / 4] = U2 - Complex(-U3.imag, U3.real); // P0 - jP1 - P2 + jP3
             }
         }
-#ifdef _VERBOSE
-        uint toc = clock();
-        std::cout << "ButterFly Unit Size: " << size << "; Time Cost: " << (double)(toc - tic) / CLOCKS_PER_SEC << "s" << std::endl;
-#endif
     }
 
     // Normalize the result
@@ -234,43 +223,22 @@ void fftConv(std::vector<Complex> &A, std::vector<Complex> &B, std::vector<Compl
     }
     Results.resize(len);
 }
-inline int read()
-{
-    char c = getchar();
-    int x = 0, f = 1;
-    while (c < '0' || c > '9')
-    {
-        if (c == '-')
-            f = -1;
-        c = getchar();
-    }
-    while (c >= '0' && c <= '9')
-    {
-        x = x * 10 + c - '0';
-        c = getchar();
-    }
-    return x * f;
-}
-// int samples[MAXN], samples2[MAXN];
 std::vector<Complex> samples1, samples2;
 std::vector<Complex> Results;
 int main()
 {
     int m, n;
     scanf("%d%d", &n, &m);
-    // n++, m++;
+    n++, m++;
     samples1.resize(n);
     samples2.resize(m);
     for (int i = 0; i < n; i++)
-        samples1[i] = Complex(read(), 0);
+        scanf("%lf", &samples1[i].real);
     for (int i = 0; i < m; i++)
-        samples2[i] = Complex(read(), 0);
+        scanf("%lf", &samples2[i].real);
 
     fftConv(samples1, samples2, Results);
-    // output the results
-
     for (int i = 0; i < Results.size(); i++)
         printf("%d ", (int)(Results[i].real + 0.5));
-
     return 0;
 }

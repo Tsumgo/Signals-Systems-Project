@@ -1,8 +1,9 @@
+// #pragma GCC optimize(2)
 #include <complex>
 #include <iostream>
 #include <vector>
 #include <cmath>
-
+#include <ctime>
 typedef unsigned int uint;
 
 class Complex
@@ -120,7 +121,6 @@ void ifft(int n, std::vector<Complex> &x)
         x[p] = x[p].conj();
     std::vector<Complex> y(n); // 自动销毁内存
     fft0(n, 1, 0, x, y);
-    // delete[] y;
     for (int k = 0; k < n; k++)
         x[k] = x[k].conj() / n;
 }
@@ -182,20 +182,39 @@ std::vector<Complex> Results;
 int main()
 {
     int m, n;
-    scanf("%d%d", &n, &m);
-    // n++, m++;
-    samples1.resize(n);
-    samples2.resize(m);
-    for (int i = 0; i < n; i++)
-        samples1[i] = Complex(read(), 0);
-    for (int i = 0; i < m; i++)
-        samples2[i] = Complex(read(), 0);
+    int dataType = 1; // 1 测试整数数据；0测试浮点数数据
+    int TestCount = 10;
+    puts(dataType ? "Test for Integer Input" : "Test for Double Input");
 
-    fftConv(samples1, samples2, Results);
+    for (int i = 0; i < TestCount; i++)
+    {
+        // 输入文件在data文件夹下
+        std::string inputFile = (dataType ? "..\\datas\\integer\\data" : "..\\datas\\double\\data") + std::to_string(i) + ".in";
+        FILE *fp = freopen(inputFile.c_str(), "r", stdin);
+        if (fp == NULL)
+        {
+            puts("Open File Failed");
+            return 0;
+        }
+        scanf("%d%d", &n, &m);
 
-    // output the results
-    for (int i = 0; i < Results.size(); i++)
-        printf("%d ", (int)(Results[i].real + 0.5));
+        samples1.resize(n);
+        samples2.resize(m);
+        for (int i = 0; i < n; i++)
+            samples1[i] = Complex(read(), 0);
+        for (int i = 0; i < m; i++)
+            samples2[i] = Complex(read(), 0);
 
+        int tic = clock();
+        fftConv(samples1, samples2, Results);
+        int toc = clock();
+
+        printf("Test :%d, (n=%d, m=%d), Time Cost:%.4lf\n", i, n, m, (double)(toc - tic) / CLOCKS_PER_SEC);
+
+        // output the results
+        // for (int i = 0; i < Results.size(); i++)
+        //     printf("%d ", (int)(Results[i].real + 0.5));
+        fclose(stdin);
+    }
     return 0;
 }

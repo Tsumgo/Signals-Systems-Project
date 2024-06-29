@@ -1,15 +1,14 @@
+// #pragma GCC optimize(2)
 #include <iostream>
-#include <vector>
 #include <complex>
+#include <vector>
 #include <cmath>
 #include <ctime>
-
-// #define _DEBUG   // to show the input and output of small size FFT
-#define _VERBOSE // to show the time cost of each butterfly unit
 
 typedef unsigned int uint;
 
 const double PI = 3.141592653589793238460;
+const uint MAXN = (1 << 24) + 1;
 
 class Complex
 {
@@ -19,39 +18,37 @@ public:
     // 构造函数
     Complex(double r = 0, double i = 0) : real(r), imag(i) {}
 
-    // Complex adder
+    // 复数的加法运算
     Complex operator+(const Complex &other) const
     {
         return Complex(real + other.real, imag + other.imag);
     }
 
-    // Complex extract
+    // 复数的减法运算
     Complex operator-(const Complex &other) const
     {
         return Complex(real - other.real, imag - other.imag);
     }
 
-    // Complex multiply
+    // 复数的乘法运算
     Complex operator*(const Complex &other) const
     {
         return Complex(real * other.real - imag * other.imag,
                        real * other.imag + imag * other.real);
     }
-
-    // Complex divide by an integer
+    // 复数除以整数
     Complex operator/(const int &other) const
     {
         return Complex(real / other, imag / other);
     }
-
-    // calculate the exponential of a complex.
+    // 计算复数的指数
     Complex exp() const
     {
         double e = std::exp(real);
         return Complex(e * std::cos(imag), e * std::sin(imag));
     }
 
-    // print a complex
+    // 打印复数
     void print() const
     {
         if (imag >= 0)
@@ -61,8 +58,26 @@ public:
     }
 };
 
-uint reversed[1 << 24];
+// 用于存放比特翻转后的下标，在卷积中，最多用到 MAXN*16 个下标
+uint reversed[MAXN << 4];
 
+int getBestN(int n)
+{
+    return pow(4, ceil(log2(n) / 2));
+}
+
+// Utility function to reverse the bits of a given index 'i'
+// 'bit' is the number of bits needed to represent the indices
+void get_reversed_by_2_bits(int bit)
+{
+    uint size = 1 << bit;
+    for (register uint i = 0; i < size; i++)
+    {
+        reversed[i] = (reversed[i >> 2] >> 2) | ((i & 3) << (bit - 2));
+    }
+}
+
+// #define _VERBOSE
 void fft_4Radix(std::vector<Complex> &samples, const int n)
 {
 #ifdef _VERBOSE
@@ -115,17 +130,6 @@ void fft_4Radix(std::vector<Complex> &samples, const int n)
                 samples[m + k + size / 4] = U2 - Complex(-U3.imag, U3.real);     // P0 + jP1 -P2 - jP3
                 samples[m + k + 2 * size / 4] = U0 - U1;                         // P0 - P1 + P2 - P3
                 samples[m + k + 3 * size / 4] = U2 + Complex(-U3.imag, U3.real); // P0 - jP1 - P2 + jP3
-                // Complex a = samples[m + k];
-                // Complex b = W1 * samples[m + k + 1 * size / 4];
-                // Complex c = W2 * samples[m + k + 2 * size / 4];
-                // Complex d = W3 * samples[m + k + 3 * size / 4];
-
-                // samples[m + k] = a + b + c + d;
-                // // samples[m + k + size / 4] = a - J * b - c + J * d;
-                // samples[m + k + size / 4] = a - Complex(-b.imag, b.real) - c + Complex(-d.imag, d.real);
-                // samples[m + k + 2 * size / 4] = a - b + c - d;
-                // // samples[m + k + 3 * size / 4] = a + J * b - c - J * d;
-                // samples[m + k + 3 * size / 4] = a + Complex(-b.imag, b.real) - c - Complex(-d.imag, d.real);
             }
         }
 #ifdef _VERBOSE
@@ -199,87 +203,80 @@ void ifft_4Radix(std::vector<Complex> &samples, const int n)
         samples[i] = samples[i] / n;
 }
 
-// bit=2n
-void get_reversed_by_2_bits(int bit)
+void fftConv(std::vector<Complex> &A, std::vector<Complex> &B, std::vector<Complex> &Results)
 {
-    uint size = 1 << bit;
-    for (register uint i = 0; i < size; i++)
+    // 实际卷积长度
+    int len = A.size() + B.size() - 1;
+    // 运算需要的长度
+    int n = getBestN(len);
+    // Calculate the number of levels in the FFT, n = 2^levels
+    int levels = uint(log2(n));
+    // get reversed index based on the levels. Calculate the array reversed[].
+    get_reversed_by_2_bits(levels);
+
+    // 保证A的长度大于等于B的长度，方便后续操作。
+    if (A.size() < B.size())
+        std::swap(A, B);
+
+    Results.resize(n);
+    A.resize(n);
+    // 将B的实部填充到A的虚部
+    for (register int i = 0; i < B.size(); i++)
     {
-        reversed[i] = (reversed[i >> 2] >> 2) | ((i & 3) << (bit - 2));
+        A[i] = Complex(A[i].real, B[i].real);
     }
+    fft_4Radix(A, n);
+    for (register int i = 0; i < n; i++)
+    {
+        Results[i] = A[i] * A[i];
+    }
+    ifft_4Radix(Results, n);
+    for (register int i = 0; i < n; i++)
+    {
+        Results[i] = Complex(Results[i].imag / 2, 0);
+    }
+    Results.resize(len);
 }
-
-// Utility function to calculate the next power of four greater than or equal to 'n'
-int getBestN(int n)
-{
-    return pow(4, ceil(log2(n) / 2));
-}
-
+std::vector<Complex> samples1, samples2;
+std::vector<Complex> Results;
 int main()
 {
-// generate random serise of lenth N
-#ifndef _DEBUG
-    int N = (1 << 20) + 10;
-    std::vector<Complex> samples = {};
-    std::cout << N << std::endl;
-    // srand(time(0));
-    for (int i = 0; i < N; i++)
+    int m, n;
+    int dataType = 1; // 1 测试整数数据；0测试浮点数数据
+    int TestCount = 10;
+
+    puts(dataType ? "Test for Integer Input" : "Test for Double Input");
+    for (int i = 0; i < TestCount; i++)
     {
-        samples.push_back(Complex(rand(), 0));
+        // 输入文件在data文件夹下
+        // 注意Windows 下的地址分隔符是'\\'，Linux下的地址分隔符是'/'
+        std::string inputFile = (dataType ? "..\\datas\\integer\\data" : "..\\datas\\double\\data") + std::to_string(i) + ".in";
+        FILE *fp = freopen(inputFile.c_str(), "r", stdin);
+        if (fp == NULL)
+        {
+            puts("Open File Failed");
+            return 0;
+        }
+
+        scanf("%d%d", &n, &m);
+        samples1.resize(n);
+        samples2.resize(m);
+        for (int i = 0; i < n; i++)
+            scanf("%d", &samples1[i].real);
+        for (int i = 0; i < m; i++)
+            scanf("%d", &samples2[i].real);
+
+        int tic = clock();
+        fftConv(samples1, samples2, Results);
+        int toc = clock();
+
+        printf("Test :%d, (n, m) = (%d, %d),Convolve Times Cost:%.4lf\n", i, n, m, (double)(toc - tic) / CLOCKS_PER_SEC);
+        // // output the results
+        // for (int i = 0; i < Results.size(); i++)
+        //     printf("%d ", (int)(Results[i].real + 0.5));
+
+        fclose(stdin);
     }
-#else
-    int N = 16;
-    std::vector<Complex> samples = {
-        {0, 0}, {1, 0}, {3, 0}, {4, 0}, {4, 0}, {3, 0}, {1, 0}, {0, 0}, {4, 0}, {1, 0}, {2, 0}, {3, 0}, {5, 0}, {1, 0}, {3, 0}, {2, 0}};
-    // std::vector<Complex> samples = {{4, 0}, {3, 0}, {1, 0}, {0, 0}};
-    // std::vector<Complex> samples = {{0, 0}, {1, 0}, {3, 0}, {4, 0}};
-    std::cout << "Input Samples:" << std::endl;
-    for (int i = 0; i < N; i++)
-        samples[i].print();
-#endif
 
-    uint tic = clock(), toc;
-    // Make sure the number of samples is a power of two
-    int n = getBestN(samples.size()); // C vector can pad with the array zeros automatically.
-    samples.resize(n);                // pads with zeroes if necessary
-
-    // Calculate the number of levels in the FFT, n = 2^levels
-    int levels = uint(log2(n) / 2);
-
-    // get reversed index based on the levels
-    get_reversed_by_2_bits(levels * 2);
-
-    toc = clock();
-    std::cout << "Time Cost:" << (double)(toc - tic) / CLOCKS_PER_SEC << "s" << std::endl;
-
-    // Performing FFT
-    fft_4Radix(samples, n);
-
-    toc = clock();
-    std::cout << "Time Cost:" << (double)(toc - tic) / CLOCKS_PER_SEC << "s" << std::endl;
-
-    // output the results
-#ifdef _DEBUG
-    std::cout << "FFT Output:" << std::endl;
-    for (int i = 0; i < n; ++i)
-    {
-        samples[i].print();
-    }
-#endif
-
-    // perform IFFT
-    ifft_4Radix(samples, n);
-
-    toc = clock();
-    std::cout << "Time Cost:" << (double)(toc - tic) / CLOCKS_PER_SEC << "s" << std::endl;
-
-    // output the results
-#ifdef _DEBUG
-    std::cout << "IFFT Output:" << std::endl;
-    for (int i = 0; i < n; ++i)
-    {
-        samples[i].print();
-    }
-#endif
     return 0;
 }

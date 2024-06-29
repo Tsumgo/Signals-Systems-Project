@@ -31,7 +31,7 @@ int main()
 {
     // 指定运行目录、输入输出目录、标准输出文件
     // 根据数据类型的不同，分别存放于double、integer文件夹下。
-    string exePath = ".\\build\\FFT_2radix_DIF.exe";
+    string exePath = ".\\build\\FFT_4radix_luogu.exe";
     string inputFolder = ".\\datas\\integer";
     string outputFolder = ".\\datas\\integer";
 
