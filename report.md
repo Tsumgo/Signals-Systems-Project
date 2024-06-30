@@ -10,8 +10,7 @@
         <img src="https://raw.githubusercontent.com/Keldos-Li/pictures/main/typora-latex-theme/ZJU-logo.svg" alt="校徽" style="width:100%;"/>
 	</div>
     </br></br></br></br></br></br></br></br>
-    <span style="font-family:华文黑体Bold;text-align:center;font-size:20pt;margin: 10pt auto;line-height:30pt;">《论文名称》</span>
-    <p style="text-align:center;font-size:14pt;margin: 0 auto">论文类型 </p>
+    <span style="font-family:华文黑体Bold;text-align:center;font-size:20pt;margin: 10pt auto;line-height:30pt;">《快速傅里叶变换的实现与优化》</span>
     </br>
     </br>
     <table style="border:none;text-align:center;width:72%;font-family:仿宋;font-size:14px; margin: 0 auto;">
@@ -19,46 +18,41 @@
     	<tr style="font-weight:normal;"> 
     		<td style="width:20%;text-align:right;">题　　目</td>
     		<td style="width:2%">：</td> 
-    		<td style="width:40%;font-weight:normal;border-bottom: 1px solid;text-align:center;font-family:华文仿宋"> 论文题目</td>     </tr>
-    	<tr style="font-weight:normal;"> 
-    		<td style="width:20%;text-align:right;">上课时间</td>
-    		<td style="width:2%">：</td> 
-    		<td style="width:40%;font-weight:normal;border-bottom: 1px solid;text-align:center;font-family:华文仿宋"> 上课时间</td>     </tr>
+    		<td style="width:40%;font-weight:normal;border-bottom: 1px solid;text-align:center;font-family:华文仿宋"> 快速傅里叶变换的实现与优化</td>     </tr>
     	<tr style="font-weight:normal;"> 
     		<td style="width:20%;text-align:right;">授课教师</td>
     		<td style="width:2%">：</td> 
-    		<td style="width:40%;font-weight:normal;border-bottom: 1px solid;text-align:center;font-family:华文仿宋">教师姓名 </td>     </tr>
+    		<td style="width:40%;font-weight:normal;border-bottom: 1px solid;text-align:center;font-family:华文仿宋">胡浩基 </td>     </tr>
     	<tr style="font-weight:normal;"> 
     		<td style="width:20%;text-align:right;">姓　　名</td>
     		<td style="width:2%">：</td> 
-    		<td style="width:40%;font-weight:normal;border-bottom: 1px solid;text-align:center;font-family:华文仿宋"> 你的名字</td>     </tr>
+    		<td style="width:40%;font-weight:normal;border-bottom: 1px solid;text-align:center;font-family:华文仿宋"> 姜子衿</td>     </tr>
     	<tr style="font-weight:normal;"> 
     		<td style="width:20%;text-align:right;">学　　号</td>
     		<td style="width:2%">：</td> 
-    		<td style="width:40%;font-weight:normal;border-bottom: 1px solid;text-align:center;font-family:华文仿宋">你的学号 </td>     </tr>
+    		<td style="width:40%;font-weight:normal;border-bottom: 1px solid;text-align:center;font-family:华文仿宋">3220102685 </td>     </tr>
     	<tr style="font-weight:normal;"> 
-    		<td style="width:20%;text-align:right;">组　　别</td>
-    		<td style="width:%">：</td> 
-    		<td style="width:40%;font-weight:normal;border-bottom: 1px solid;text-align:center;font-family:华文仿宋"> 你的组别</td>     </tr>
     	<tr style="font-weight:normal;"> 
     		<td style="width:20%;text-align:right;">日　　期</td>
     		<td style="width:2%">：</td> 
-    		<td style="width:40%;font-weight:normal;border-bottom: 1px solid;text-align:center;font-family:华文仿宋">完成日期</td>     </tr>
+    		<td style="width:40%;font-weight:normal;border-bottom: 1px solid;text-align:center;font-family:华文仿宋">2024/6</td>     </tr>
     </tbody>              
     </table>
 </div>
 <!-- 注释语句：导出PDF时会在这里分页 -->
 
-<center><div style='height:2mm;'></div><div style="font-family:华文楷体;font-size:14pt;">你的名字，12345678909 （学号）</div></center>
-<center><span style="font-family:华文楷体;font-size:9pt;line-height:9mm">浙江大学***** (单位)</span>
+<center><div style='height:2mm;'></div><div style="font-family:华文楷体;font-size:14pt;">姜子衿，3220102685</div></center>
+<center><span style="font-family:华文楷体;font-size:9pt;line-height:9mm">浙江大学 信息与电子工程学院</span>
 </center>
 <div>
-<div style="width:52px;float:left; font-family:方正公文黑体;">摘　要：</div> 
-<div style="overflow:hidden; font-family:华文楷体;">在信息化时代背景下，计算机操作系统在各行业领域中得到广泛应用。本文试图通过对计算机系统概念、功能和分类、历史的介绍，大致地给出对计算机操作系统的认识，并通过对当前主流桌面操作系统Windows和macOS的简要介绍，使读者能够对现代图形界面操作系统有一个较为全面的了解，从而喜欢上某一个操作系统，供读者参考。</div>
+<div style="width:52px;float:left; font-family:方正公文黑体;">摘要：</div> 
+<div style="overflow:hidden; font-family:华文楷体;">	本报告围绕快速傅里叶变换（FFT）的实现与优化展开，在介绍了DFT的定义后，详细介绍了最常用的FFT实现算法：Cooley-Tukey算法以及相应的衍生算法：DIF FFT、4-radix FFT、Stockham FFT、mix-radix FFT。在此基础上介绍了基于FFT的卷积，并提出了一种优化算法，使卷积运算量减少了1/3。基于现代计算机体系结构和并行计算技术的发展，报告探讨了如何在底层对FFT进行优化计算，并利用现有的第三方库检验了优化效果。最后，报告通过实验比较了不同优化策略下FFT算法的性能，结果表明，针对特定硬件平台进行优化可以显著提升计算速度。
+	快速傅里叶变换作为一种高效的频域分析工具，其优化和实现对现代科学计算和工程应用具有重要意义。通过不断改进算法和利用先进的计算技术，FFT将继续在各种领域发挥关键作用。
+</div>
 </div>
 <div>
-<div style="width:52px;float:left; font-family:方正公文黑体;">关键词：</div> 
-<div style="overflow:hidden; font-family:华文楷体;">计算机；操作系统；功能；发展；Windows；macOS；</div>
+<div style="width:80px;float:left; font-family:方正公文黑体;">关键词：</div> 
+<div style="overflow:hidden; font-family:华文楷体;">傅里叶变换，快速傅里叶变换（FFT），卷积，异构计算</div>
 </div>
 
 
@@ -243,7 +237,7 @@ for s = 1 to log2(n)
 
 继续将$N/2$点的DFT展开，我们将得到如下数据流向图：
 
-xxxxx
+![image-20240629190306887](https://tsumgo2003-1323474554.cos.ap-shanghai.myqcloud.com/img/image-20240629190306887.png)
 
 ### 递推：比特翻转
 
@@ -325,15 +319,7 @@ xxxxx
 
 ​	在下面的章节中，会尝试从内存访问的角度提升计算速度。事实上，后人对FFT在算法上有许多创新，但对于速度的提升十分有限。速度的提升更多是基于**底层优化、并行计算**。
 
-### Code Implementation
-
-在此仅展现关键C++代码。完整代码详见附件。
-
-```c++
-
-```
-
-​	在位翻转操作中，我们通过预处理函数`get_reversed`计算得到了每一个`i`对应的翻转下表`reversed[i]`。
+​	**备注：实验结果详见附录。**
 
 ## DIF C-T 算法
 
@@ -367,6 +353,8 @@ Y=(x-y)w^j
 $$
 
 ​	在DIF 的库利-图基算法中，输出数据的顺序被打乱了，因此需要在最后对输出数据进行比特翻转操作。
+
+​	DIF算法与DIT算法的运算效率近似，实验代码在附录中给出，不做另外测试。
 
 ## Radix-4 C-T 算法
 
@@ -568,7 +556,7 @@ $$
 
 ### 速度瓶颈
 
-​	显然，如果数据长度为$4^n$，基-4FFT回比基-2FFT有更好的效率。但由于在实际运算中需要用到零填充操作，一个$4^n+1$长度的序列会被扩展为$4^{n+1}$，造成了大量的时间浪费。因此，在很多数据集上，基-4 FFT算法反而不如基-2 FFT。
+​	实验测试发现，如果数据长度为$4^n$，基-4FFT会比基-2FFT有更好的表现。但由于在实际运算中需要用到零填充操作，一个$4^n+1$长度的序列会被扩展为$4^{n+1}$，造成了大量的时间浪费。因此，在更大的数据集、非4指数的数据集上，基-4 FFT算法反而不如基-2 FFT。
 
 ## Stockham FFT：原地自动整序算法
 
@@ -582,22 +570,27 @@ $$
 
 ## 混合基算法
 
-​	我们假设$N=N_1*N_2$
+​	我们假设$N=n_1*n_2$。
 $$
 X[k]=\sum_{j=0}^{N-1}x\left\lbrack j\right\rbrack\omega_{N}^{jk},\quad0\leq k\leq N-1
 $$
 ​	如果N能被分解为$N_1*N_2$，那么上式的下标$k,j$可以表示为：
 $$
-j=j_1+j_2N_1,\quad k=k_2+k_1N_2
+j=j_1+j_2n_1,\quad k=k_2+k_1n_2
 $$
-​	把X[k]，x[j]分别用二元组来表示：
+​	把$X[k]$，$x[j]$分别用二元组来表示：
 $$
 x[j]=x[j_1,j_2],\quad0\leq j_1\leq n_1-1,\quad0\leq j_2\leq n_2-1\\
 X[k]=X[k_2,k_1],\quad0\leq k_1\leq n_1-1,\quad0\leq k_2\leq n_2-1
 $$
-​	例如，$N=6=2*3$，那么$X[0]=X[0+0*3],X[]$1
-
-
+​	那么DFT公式可以重新表示为：
+$$
+\begin{aligned}
+X[ k_2,k_1] & =\sum_{j_1=0}^{n_1-1}\sum_{j_2=0}^{n_2-1}x[j_1,j_2]\omega_{n}^{(j_1+j_2n_1)(k_2+k_1n_2)}\\  
+& =\sum_{j_1=0}^{n_1-1}\sum_{j_2=0}^{n_2-1}x[j_1,j_2]\omega_{n}^{j_1k_2}\omega_{n}^{j_1k_1n_2}\omega_{n}^{j_2k_2n_1}\omega_{n}^{j_2k_1n_1n_2}\\  & =\sum_{j_1=0}^{n_1-1}\left[\sum_{j_2=0}^{n_2-1}x[j_1,j_2]\omega_{n_2}^{j_2k_2}\omega_{n_1n_2}^{j_1k_2}\right]\omega_{n_1}^{j_1k_1}.\end{aligned}
+$$
+​	上式的计算用到$w_n^{n_1n_2}=1$化简。上面的等式表明：n点DFT可以分解为$n_1$点DFT和$n_2$点DFT。如果将n点DFT递归地分为$n_1=n/2$点DFT和$n_2=2$点DFT，就推导出了频率抽取库利-图基算法；如果分解为$n_1＝2$点DFT和$n_2＝n/2$点DFT，就推导了时间抽取的Cooley–Tukey FFT算法。
+​	当使用不同的基构造蝶形算子时，算法被称为混合基FFT（mix-radix FFT）。FFTW（Fastest Fourier Transform in the West）就是基于Stockham FFT与混合基算法开发的傅里叶运算库，能够在不同的数据规模上都有非常好的表现。
 
 ## 使用FFT快速卷积
 
@@ -610,7 +603,7 @@ $$
 
 ### FFT-Convolve
 
-下面，我们借助FFT与IFFT（傅里叶逆变换）来实现卷积操作。具体流程如下：
+​	可以借助FFT与IFFT（傅里叶逆变换）来实现卷积操作。具体流程如下：
 
 1. 计算$f[n]$和$g[n]$的傅里叶变换
 
@@ -681,79 +674,47 @@ $$
 
 ​	FFTW是由 Frigo 和 Johnson开发的一个快速、可扩展的FFT实现。在实际计算DFT之前，FFTW会预先执行一个辅助函数，通过一些列的试运行，确定在当前主机上分解FFT的最佳方式。FFTW能够针对硬件平台的缓存对程序进行自适应的调整，在任何规模上都有非常好的表现。
 
-​	事实上，MATLAB自带的FFT也对FFTW进行了调用，并在这个基础上做了更多基于MATLAB特性的底层优化，将其强大的矩阵运算能力发挥到极致。
+​	事实上，MATLAB自带的FFT也对FFTW进行了调用，并在这个基础上做了更多基于MATLAB特性的底层优化，将其强大的矩阵运算能力发挥到极致。测试结果详见附录。
 
-​	在 linux 环境下调用FFTW库完成卷积计算。编译方式详见源文件。关键代码如下：
+​	在 linux 下配置FFTW环境，并使用官方提供的基于不同指令集的优化命令，来实现效率最大化。配置方式详见文件`readme.md`。
 
-```cpp
-#include <fftw.h>  // 需要调用相应的头文件
-...
-void FFTW_Conv(double *a, int a_len, double *b, int b_len, double *Result)
-{
-    int n = a_len + b_len - 1;
-    int N = nextPowerOfTwo(n);
-    fftw_complex *A = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * N);
-    fftw_complex *B = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * N);
-    fftw_complex *C = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * N);
-    double *a_padded = (double *)fftw_malloc(sizeof(double) * N);
-    double *b_padded = (double *)fftw_malloc(sizeof(double) * N);
-    double *c_padded = (double *)fftw_malloc(sizeof(double) * N);
-    // 填充输入数据
-    for (int i = 0; i < N; i++)
-    {
-        a_padded[i] = (i < a_len) ? a[i] : 0;
-        b_padded[i] = (i < b_len) ? b[i] : 0;
-    }
-    // 创建 FFTW 计划
-    fftw_plan pA = fftw_plan_dft_r2c_1d(N, a_padded, A, FFTW_ESTIMATE); // 实数到虚数的转换
-    fftw_plan pB = fftw_plan_dft_r2c_1d(N, b_padded, B, FFTW_ESTIMATE); // real to complex 1 dimentional
-    fftw_plan pC = fftw_plan_dft_c2r_1d(N, C, c_padded, FFTW_ESTIMATE); // complex to real 1 dimentional
-    // 执行 FFT
-    fftw_execute(pA);
-    fftw_execute(pB);
-    // 点乘
-    for (int i = 0; i < N; i++)
-    {
-        C[i][0] = A[i][0] * B[i][0] - A[i][1] * B[i][1];
-        C[i][1] = A[i][0] * B[i][1] + A[i][1] * B[i][0];
-    }
-    // 执行逆 FFT
-    fftw_execute(pC);
-    // 复制结果
-    for (int i = 0; i < n; i++)
-    {
-        Result[i] = c_padded[i] / N;
-    }
-    // 清理内存
-    fftw_destroy_plan(pA);
-    fftw_destroy_plan(pB);
-    fftw_destroy_plan(pC);
-    fftw_free(A);
-    fftw_free(B);
-    fftw_free(C);
-    fftw_free(a_padded);
-    fftw_free(b_padded);
-    fftw_free(c_padded);
-}
-```
-
-### 异构计算
+### CUDA异构计算
 
 ​	CUDA（Compute Unified Device Architecture）是由NVIDIA开发的一种并行计算平台和编程模型，允许开发者使用图形处理单元（GPU）来进行通用计算。在FFT算法中应用GPU强大的并行计算能力，对运算速度有着极大的提升。
 
-## 总结
+​	cuFFT API是以FFTW为模型，基于英伟达图形计算单元开发的傅里叶变换计算库。类似的，它提供了称为计划“Plan”的运算初始化机制，用户能够方便地添加配置，从而针对不同的数据，最大化硬件加速的效果。具体来说，cuFFT提供了以下三种配置API：
 
-​	在众多FFT算法中，基2-库利图基算法有着非常稳定的运算效率。由于选择的基数小，在任意数据上都有不错的表现。
+- cufftPlat1D() / cufftPlat2D() / cufftPlan3D()：完成一次一维/二维/三维的傅里叶变换。
+- cufftPlanMany()：支持多组数据
 
-​	基4 C-T算法在以4为指数的数据上有着更加优越的性能，但由于基底变大，算法在不同数据上的灵活性较小，通常容易花费很多不必要的时间进行数据零填充，消耗更多算力。
 
-​	能够原地整序的Stockham FFT优化了内存访问机制，在大数据上依然有非常不错的性能。
 
-​	混合基算法结合以上两个算法的优点，对于不同的数据都有非常高的灵活性，因此能够有稳定的速度表现。
+1. 定义输入数据和结果数组，并将其**分配到GPU内存**中；
+2. 初始化输入数据，并将其从**主机内存拷贝到GPU内存；**
+3. **创建**了一个cuFFT计划，并使用 `cufftExecC2C()` 函数**执行FFT变换；**
+4. **释放** cuFFT 计划；
+5. 将结果从GPU内存**拷贝回主机内存**，并打印输出结果；
+6. **释放内存；**
+
+## 总结与展望
+
+​	本文对多种常见的FFT算法进行了实现与优化，并与MATLAB的运算速度进行对比。	
+
+​	在众多FFT算法中，基2-库利图基算法有着非常稳定的运算效率。由于选择的基数小，在任意数据上都有不错的表现。相比之下，基4 C-T算法在以4为指数的数据上有着更加优越的性能。但由于基底变大，算法在不同数据上的灵活性较小，通常容易花费很多不必要的时间进行数据零填充，消耗更多算力；此外，大跨度的内存空间访问也拖慢了程序速度，有待进一步优化。
+
+​	混合基算法则能够结合以上两个算法的优点，对于不同的数据都有比较高的灵活性，因此能够有稳定的速度表现。一个例子就是FFTW：它实现了2,3,5,7,11等规模蝶形网络，并通过简单的质因数分解，确定最佳的运算方案。对不同的数据，FFTW都能有很好的表现。
+
+​	能够原地整序的Stockham FFT优化了内存访问机制，在大数据上有很好的性能表现（相比于未经指令集优化、异构计算的算法而言）。并且对于并行架构来说，Stockham因其特殊的内存访问机制，而被更广泛地应用。
+
+​	除了算法上的改进，底层优化、并行计算对FFT的效率提升更加显著。例如：直接在CPU上调用FFTW，并作一些简单的指令集优化，就能达到与MATLAB相近的运算效率。
+
+​	在实际应用中，更多是使用开源库或已有的第三方库辅助FFT的计算：例如：FFTW就可以很方便地部署到单片机、数字处理单元之中；英伟达开发的基于CUDA的快速傅里叶变换库 cuFFT 可以直接使用C语言调用运行，为二次开发提供了很大的便利。
+
+​	在本次探索中，笔者针对各类常见的FFT算法进行了复现与测试，并调用了当下常见的FFT库进行二次开发。由于时间、精力有限，没能对更高效的算法，例如split radix FFT、mix radix FFT进行逐一复现，是一大遗憾。
 
 ## 附录与测试结果
 
-​	以下测试数据来源于由`gen_data.cpp`生成的随机序列，且使用同样的数据集。除了NTT以外，代码实现上均并不区分整数、浮点数浮点序列，因而运行速率大致相等，浮点序列的运行效率略低于整数序列。
+​	以下测试数据来源于由`gen_data.cpp`生成的随机序列，且使用同样的数据集。代码实现上均并不区分整数、浮点数浮点序列，因而运行速率大致相等，浮点序列的运行效率略低于整数序列。
 
 ### MATLAB测试
 
@@ -784,11 +745,6 @@ void FFTW_Conv(double *a, int a_len, double *b, int b_len, double *Result)
 | $2^{20}+1, 2^{20}+1, N=2^{21}+1 $ |   Int    |    0.3253     |
 |           $N=2^{22}-2$            |   Int    |    0.8699     |
 |            $N=2^{24}$             |   Int    |    1.9135     |
-|   $2^{16} ,2^{16}, N=2^{17}-1$    |  Float   |    0.0119     |
-|  $2^{16}+1,2^{16}+1,N=2^{17}+1$   |  Float   |    0.0210     |
-|         $ N=3*2^{20}-1 $          |  Float   |    0.3282     |
-|           $N=2^{22}-2$            |  Float   |    3.2287     |
-|            $N=2^{24}$             |  Float   |    0.6339     |
 
 ![image-20240629162814952](C:\Users\user\AppData\Roaming\Typora\typora-user-images\image-20240629162814952.png)
 
@@ -843,8 +799,19 @@ void FFTW_Conv(double *a, int a_len, double *b, int b_len, double *Result)
 
 ![image-20240629163739404](C:\Users\user\AppData\Roaming\Typora\typora-user-images\image-20240629163739404.png)
 
-## References
+## 参考文献
 
+[1]. Takahashi D. Fast Fourier transform algorithms for parallel computers[M]. Springer Singapore, 2019.
 
+[2]. Temperton C. Self-sorting in-place fast Fourier transforms[J]. SIAM Journal on Scientific and Statistical Computing, 1991, 12(4): 808-823.
 
-​	
+[3]. [蝶形结 - 维基百科，自由的百科全书 (wikipedia.org)](https://zh.wikipedia.org/wiki/蝶形结)
+
+[4]. [快速傅里叶变换 - 维基百科，自由的百科全书 (wikipedia.org)](https://zh.wikipedia.org/wiki/快速傅里叶变换)
+
+[5]. Frigo M, Johnson S G. FFTW: An adaptive software architecture for the FFT[C]//Proceedings of the 1998 IEEE International Conference on Acoustics, Speech and Signal Processing, ICASSP'98 (Cat. No. 98CH36181). IEEE, 1998, 3: 1381-1384.
+
+[6]. Takahashi D, Kanada Y. High-performance radix-2, 3 and 5 parallel 1-D complex FFT algorithms for distributed-memory parallel computers[J]. The Journal of Supercomputing, 2000, 15: 207-228.
+
+[7]. Singleton R C. An algorithm for computing the mixed radix fast Fourier transform[J]. IEEE Transactions on audio and electroacoustics, 1969, 17(2): 93-103.
+

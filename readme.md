@@ -101,11 +101,13 @@ sudo make install
 
 ![image-20240629143539367](https://tsumgo2003-1323474554.cos.ap-shanghai.myqcloud.com/img/image-20240629143539367.png)
 
+5. 项目-->属性-->平台选x64；链接器-->输入-->附加依赖项-->加入cufft.lib这个名字。
+
+   ![image-20240630155221023](https://tsumgo2003-1323474554.cos.ap-shanghai.myqcloud.com/img/image-20240630155221023.png)
+
 5. 右键需要编译的`.cu`文件，点击属性，将文件属性设置为CUDA C/C++
 
 ![image-20240629143442388](C:\Users\user\AppData\Roaming\Typora\typora-user-images\image-20240629143442388.png)
-
-
 
 6. 键入示例代码，即可编译运行。
 
