@@ -169,9 +169,9 @@ void ifft_4Radix(std::vector<Complex> &samples, const int n)
 
         for (int m = 0; m < n; m += size)
         {
-            for (int k = 0; k < size / 4; k++) // one butterfly unit
+            for (int k = 0; k < size / 4; k++) // 单个蝶形算子
             {
-                // 3 Complex multiples, 8 Complex addition
+                // 3次复数乘法，8次复数加法。
                 Complex W1 = w1[k]; // w1
                 Complex W2 = w2[k]; // w1^2
                 Complex W3 = w3[k]; // w1^3
@@ -209,9 +209,9 @@ void fftConv(std::vector<Complex> &A, std::vector<Complex> &B, std::vector<Compl
     int len = A.size() + B.size() - 1;
     // 运算需要的长度
     int n = getBestN(len);
-    // Calculate the number of levels in the FFT, n = 2^levels
+    // 计算FFT 层数
     int levels = uint(log2(n));
-    // get reversed index based on the levels. Calculate the array reversed[].
+    // 比特翻转
     get_reversed_by_2_bits(levels);
 
     // 保证A的长度大于等于B的长度，方便后续操作。

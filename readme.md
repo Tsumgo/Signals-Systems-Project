@@ -109,7 +109,7 @@ sudo make install
 
 ![image-20240629143442388](C:\Users\user\AppData\Roaming\Typora\typora-user-images\image-20240629143442388.png)
 
-6. 键入示例代码，即可编译运行。
+6. 键入示例代码，若编译运行无误，则环境配置成功。
 
    ```cpp
    #include "stdio.h"
@@ -132,6 +132,3 @@ sudo make install
    ```
 
 
-
-
-注意：CUDA Toolkit 自 10.1 版本开始，不再提供 `helper_cuda.h` 等辅助头文件和工具函数库。这些文件以前是在 CUDA Samples 中提供的，但现在需要从 CUDA Samples 的 GitHub 仓库下载。

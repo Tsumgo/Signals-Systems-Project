@@ -71,12 +71,13 @@ static uint nextPowerOfTwo(uint x)
     return ++x;
 }
 
+/// @brief 实现FFT的基本操作
+/// @param n 序列长度
+/// @param s 当前FFT块的合并跨度
+/// @param eo 如果 eo=1, 数组x是输出；否则数组y为输出
+/// @param x eo=1时为输入序列
+/// @param y eo=1是为辅助工作区
 void fft0(int n, int s, bool eo, std::vector<Complex> &x, std::vector<Complex> &y)
-// n  : sequence length
-// s  : stride
-// eo : x is output if eo == 0, y is output if eo == 1
-// x  : input sequence(or output sequence if eo == 0)
-// y  : work area(or output sequence if eo == 1)
 {
     const int m = n / 2;
     const double theta0 = 2 * M_PI / n; // 旋转因子的角度
@@ -105,17 +106,15 @@ void fft0(int n, int s, bool eo, std::vector<Complex> &x, std::vector<Complex> &
     }
 }
 
+/// @brief 实现长度为n的序列的傅里叶变换
 void fft(int n, std::vector<Complex> &x) // Fourier transform
-// n : sequence length
-// x : input/output sequence
 {
     std::vector<Complex> y(n); // 自动销毁内存
     fft0(n, 1, 0, x, y);
 }
 
+/// @brief 实现长度为n的序列的傅里叶逆变换
 void ifft(int n, std::vector<Complex> &x)
-// n : sequence length
-// x : input/output sequence
 {
     for (int p = 0; p < n; p++)
         x[p] = x[p].conj();
@@ -126,8 +125,8 @@ void ifft(int n, std::vector<Complex> &x)
 }
 
 /// @brief 使用两次FFT来计算卷积
-/// @param A
-/// @param B
+/// @param A 卷积序列A
+/// @param B 卷积序列B
 /// @param Results
 void fftConv(std::vector<Complex> &A, std::vector<Complex> &B, std::vector<Complex> &Results)
 {

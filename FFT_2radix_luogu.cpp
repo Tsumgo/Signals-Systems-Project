@@ -1,4 +1,3 @@
-// #pragma GCC optimize(2)
 #include <iostream>
 #include <complex>
 #include <vector>
@@ -9,6 +8,7 @@ typedef unsigned int uint;
 
 const uint MAXN = (1 << 24) + 5;
 
+// 自定义Complex计算。为了减少内存占用，不使用std::complex
 class Complex
 {
 public:
@@ -76,9 +76,9 @@ void get_reversed(int bit)
     }
 }
 
-// The FFT function
-// 'samples' is a reference to the vector containing the time-domain sample values
-// 'n' is the number of points in FFT, must be a power of two
+/// @brief 基-2 FFT算法
+/// @param samples 原始序列
+/// @param n 序列长度，保证为2的指数
 void fft(std::vector<Complex> &samples, const uint n)
 {
     const double PI = 3.141592653589793238460;
@@ -91,7 +91,7 @@ void fft(std::vector<Complex> &samples, const uint n)
         }
     }
 
-    // Cooley-Tukey iterative FFT algorithm
+    // C-T 递推算法
     for (int size = 2; size <= n; size <<= 1) // the size of butterfly unit.
     {
         Complex w_m = Complex(0, -2 * PI / size).exp(); // twiddle factor (w)
@@ -111,6 +111,9 @@ void fft(std::vector<Complex> &samples, const uint n)
     }
 }
 
+/// @brief  基2 IFFT算法
+/// @param samples 原始序列
+/// @param n  序列长度，保证为2的指数
 void ifft(std::vector<Complex> &samples, const int n)
 {
     const double PI = 3.141592653589793238460;
@@ -157,9 +160,9 @@ void fftConv(std::vector<Complex> &A, std::vector<Complex> &B, std::vector<Compl
     int len = A.size() + B.size() - 1;
     // 运算需要的长度
     int n = nextPowerOfTwo(len);
-    // Calculate the number of levels in the FFT, n = 2^levels
+    // 计算FFT层数
     int levels = uint(log2(n));
-    // get reversed index based on the levels. Calculate the array reversed[].
+    // 计算比特翻转
     get_reversed(levels);
 
     // 保证A的长度大于等于B的长度，方便后续操作。
@@ -195,29 +198,26 @@ void fftConv_3times(std::vector<Complex> &A, std::vector<Complex> &B, std::vecto
     int len = A.size() + B.size() - 1;
     // 运算需要的长度
     int n = nextPowerOfTwo(len);
-    // Calculate the number of levels in the FFT, n = 2^levels
     int levels = uint(log2(n));
-    // get reversed index based on the levels. Calculate the array reversed[].
+    // 计算比特翻转
     get_reversed(levels);
-    // Resize A and B to n, filling with zeros
+    // 零填充
     A.resize(n);
     B.resize(n);
     Results.resize(n);
 
-    // Perform FFT on both A and B
+    // 计算 FFT
     fft(A, n);
     fft(B, n);
 
-    // Point-wise multiply the FFT results
+    // A * B
     for (int i = 0; i < n; i++)
     {
         Results[i] = A[i] * B[i];
     }
 
-    // Perform IFFT on the result
+    // 计算IFFT
     ifft(Results, n);
-
-    // Optionally, resize Results to the original convolution size (A.size() + B.size() - 1)
     Results.resize(len);
 }
 inline int read()
@@ -273,7 +273,7 @@ int main()
         int toc = clock();
         printf("Test :%d,(n=%d, m=%d) Time Cost:%.4lf\n", i, n, m, (double)(toc - tic) / CLOCKS_PER_SEC);
 
-        // output the results
+        // 输出数据。如有需要，取消下方注释。
         // for (int i = 0; i < Results.size(); i++)
         //     printf("%d ", (int)(Results[i].real + 0.5));
         fclose(stdin);
